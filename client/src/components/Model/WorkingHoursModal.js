@@ -9,15 +9,226 @@ const WorkingHoursModal = (props) => {
     cong_main[0].bang_cong_t ||
       he_so_thuong[0].bang_cong_t ||
       gio_cong_gian_ca[0].bang_cong_t
-  ); // Chuỗi chứa tháng và năm
-
-  const days = Array.from(
-    { length: getDaysInMonth(dateInput) },
-    (_, i) => i + 1
   );
+
   // console.log("congmain", cong_main);
   // console.log("he_so_thuong", he_so_thuong);
   // console.log("gio_cong_gian_ca", gio_cong_gian_ca);
+
+  const AttendanceTableHST = ({ data }) => {
+    const days = getDaysInMonth(dateInput);
+
+    const daysData = [
+      data.cot1,
+      data.cot2,
+      data.cot3,
+      data.cot4,
+      data.cot5,
+      data.cot6,
+      data.cot7,
+      data.cot8,
+      data.cot9,
+      data.cot10,
+      data.cot11,
+      data.cot12,
+      data.cot13,
+      data.cot14,
+      data.cot15,
+      data.cot16,
+      data.cot17,
+      data.cot18,
+      data.cot19,
+      data.cot20,
+      data.cot21,
+      data.cot22,
+      data.cot23,
+      data.cot24,
+      data.cot25,
+      data.cot26,
+      data.cot27,
+      data.cot28,
+      data.cot29,
+      data.cot30,
+      data.cot31,
+    ].slice(0, days);
+
+    return (
+      <div className="overflow-y-scroll" style={{ height: 300 }}>
+        <table className="table table-striped h-100" border="1">
+          <tbody>
+            {daysData.map((dayData, index) => (
+              <tr key={index}>
+                <td>Ngày {index + 1}:</td>
+                <td className="text-end">
+                  {dayData !== null ? formatNumber(dayData) : 0}
+                </td>
+              </tr>
+            ))}
+            <tr>
+              <td>VPCL:</td>
+              <td className="text-end">{formatNumber(data.vpcl)}</td>
+            </tr>
+            <tr>
+              <td>VPKL:</td>
+              <td className="text-end">{formatNumber(data.vpkl)}</td>
+            </tr>
+            <tr>
+              <td>O:</td>
+              <td className="text-end">{formatNumber(data.o)}</td>
+            </tr>
+            <tr>
+              <td>HSBQ:</td>
+              <td className="text-end">{formatNumber(data.hsbq)}</td>
+            </tr>
+            <tr>
+              <td>HSBQTHG:</td>
+              <td className="text-end">{formatNumber(data.hsbqthg)}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const AttendanceMain = () => {
+    return (
+      <div className="overflow-y-scroll" style={{ height: 300 }}>
+        <table className="table table-striped h-100">
+          <tbody>
+            <tr>
+              <td>Hành chính + Ca1 + Ca2:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].hanh_chinh_ca1_ca2)}
+              </td>
+            </tr>
+            <tr>
+              <td>Ca3:</td>
+              <td className="text-end">{formatNumber(cong_main[0].ca3)}</td>
+            </tr>
+            <tr>
+              <td>Ngày thường:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].ngay_thuong)}
+              </td>
+            </tr>
+            <tr>
+              <td>Ngày nghỉ hàng tuần:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].ngay_nghi_hang_tuan)}
+              </td>
+            </tr>
+            <tr>
+              <td>Ngày lễ:</td>
+              <td className="text-end">{formatNumber(cong_main[0].ngay_le)}</td>
+            </tr>
+            <tr>
+              <td>Giờ công thai thứ 7:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].gc_thai_thu_7)}
+              </td>
+            </tr>
+            <tr>
+              <td>Giờ công nuôi con nhỏ:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].gc_nuoi_con_nho)}
+              </td>
+            </tr>
+            <tr>
+              <td>Giờ công người cao tuổi:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].gc_nguoi_cao_tuoi)}
+              </td>
+            </tr>
+            <tr>
+              <td>Giờ công công tác:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].gc_cong_tac)}
+              </td>
+            </tr>
+            <tr>
+              <td>Phép(giờ):</td>
+              <td className="text-end">{formatNumber(cong_main[0].phep)}</td>
+            </tr>
+            <tr>
+              <td>Ốm(giờ):</td>
+              <td className="text-end">{formatNumber(cong_main[0].om)}</td>
+            </tr>
+            <tr>
+              <td>Con ốm(giờ):</td>
+              <td className="text-end">{formatNumber(cong_main[0].con_om)}</td>
+            </tr>
+            <tr>
+              <td>Việc riêng có lương(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].viec_rieng_co_luong)}
+              </td>
+            </tr>
+            <tr>
+              <td>Việc riêng không lương(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].viec_rieng_khong_luong)}
+              </td>
+            </tr>
+            <tr>
+              <td>Không lý do(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].khong_ly_do)}
+              </td>
+            </tr>
+            <tr>
+              <td>Việc riêng không lương(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].viec_rieng_khong_luong)}
+              </td>
+            </tr>
+            <tr>
+              <td>Khám thai(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].kham_thai)}
+              </td>
+            </tr>
+            <tr>
+              <td>Thai sản(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].thai_san)}
+              </td>
+            </tr>
+            <tr>
+              <td>Dưỡng sức(giờ):</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].duong_suc)}
+              </td>
+            </tr>
+            <tr>
+              <td>Trong giờ:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].trong_gio)}
+              </td>
+            </tr>
+            <tr>
+              <td>Ngoài giờ:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].ngoai_gio)}
+              </td>
+            </tr>
+            <tr>
+              <td>Giờ công ngừng việc:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].gc_ngung_viec)}
+              </td>
+            </tr>
+            <tr>
+              <td>Giờ công nghỉ lễ:</td>
+              <td className="text-end">
+                {formatNumber(cong_main[0].gc_nghi_le)}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
   const renderContent = () => {
     switch (currentView) {
       case "cong_main":
@@ -43,7 +254,8 @@ const WorkingHoursModal = (props) => {
                       <strong>Số thẻ:</strong> LH{cong_main[0].so_the}
                     </p>
                     <h5 className="mt-4">Chi tiết công</h5>
-                    <div className="overflow-x-auto">
+                    {/* Ngang */}
+                    {/* <div className="overflow-x-auto">
                       <table className="min-w-full border-collapse border border-gray-300">
                         <thead>
                           <tr className="bg-gray-100">
@@ -250,7 +462,9 @@ const WorkingHoursModal = (props) => {
                           </tr>
                         </tbody>
                       </table>
-                    </div>
+                    </div> */}
+                    {/* Dọc */}
+                    {AttendanceMain()}
                   </div>
                 </div>
               </div>
@@ -281,7 +495,7 @@ const WorkingHoursModal = (props) => {
                     </p>
                     <h5 className="mt-4">Chi tiết công</h5>
                     {/* dạng ngang */}
-                    <div className="overflow-x-scroll">
+                    {/* <div className="overflow-x-scroll">
                       <table className="border">
                         <thead>
                           <tr>
@@ -423,230 +637,9 @@ const WorkingHoursModal = (props) => {
                           </tr>
                         </tbody>
                       </table>
-                    </div>
-                    {/* dạng dọc */}
-                    {/* <div className="overflow-y-scroll" style={{ height: 300 }}>
-                      <table className="table table-striped h-100">
-                        <tbody>
-                          <tr>
-                            <td>1:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot1)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>2:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot2)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>3:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot3)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>4:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot4)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>5:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot5)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>6:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot6)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>7:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot7)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>8:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot8)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>9:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot9)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>10:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot10)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>11:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot11)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>12:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot12)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>13:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot13)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>14:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot14)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>15:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot15)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>16:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot16)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>17:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot17)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>18:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot18)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>19:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot19)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>20:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot20)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>21:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot21)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>22:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot22)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>23:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot23)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>24:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot24)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>25:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot25)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>26:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot26)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>27:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot27)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>28:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot28)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>29:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot29)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>30:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot30)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>31:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].cot31)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>vpcl:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].vpcl)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>vpcl:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].vpkl)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>o:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].o)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>hsbq:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].hsbq)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>hsbqthg:</td>
-                            <td className="text-end">
-                              {formatNumber(he_so_thuong[0].hsbqthg)}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
                     </div> */}
+                    {/* dạng dọc */}
+                    <AttendanceTableHST data={he_so_thuong[0]} />
                   </div>
                 </div>
               </div>
@@ -677,11 +670,9 @@ const WorkingHoursModal = (props) => {
                     <p>
                       <strong>Số thẻ:</strong> LH{gio_cong_gian_ca[0].so_the}
                     </p>
-
                     <h5 className="mt-4">Chi tiết công</h5>
-
                     {/* dạng đứng */}
-                    <div className="overflow-x-scroll">
+                    {/* <div className="overflow-x-scroll">
                       <table className="border border-collapse">
                         <thead>
                           <tr>
@@ -730,17 +721,11 @@ const WorkingHoursModal = (props) => {
                           </tr>
                         </tbody>
                       </table>
-                    </div>
+                    </div> */}
                     {/* dọc */}
-                    {/* <div className="overflow-y-scroll" style={{ height: 300 }}>
+                    <div className="overflow-y-scroll" style={{ height: 300 }}>
                       <table className="table table-striped h-100">
                         <tbody>
-                          <tr>
-                            <td>STT:</td>
-                            <td className="text-end">
-                              {formatNumber(gio_cong_gian_ca[0].stt)}
-                            </td>
-                          </tr>
                           <tr>
                             <td>Hành chính + Ca1 + Ca2:</td>
                             <td className="text-end">
@@ -781,7 +766,7 @@ const WorkingHoursModal = (props) => {
                           </tr>
                         </tbody>
                       </table>
-                    </div> */}
+                    </div>
                   </div>
                 </div>
               </div>
