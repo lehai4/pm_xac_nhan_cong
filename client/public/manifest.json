@@ -1,0 +1,25 @@
+{
+  "short_name": "Xác nhận chi lương",
+  "name": "Phần mền Xác nhận chi lương Việt Long Hưng",
+  "icons": [
+    {
+      "src": "salary.png",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "salary.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "salary.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}

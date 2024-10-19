@@ -1,0 +1,14 @@
+.white-space {
+  white-space: nowrap;
+}
+.text-center {
+  text-align: center;
+}
+
+/* th.dotcongTh {
+  background: rgba(var(--bs-emphasis-color-rgb), 0.05);
+}
+
+.borderRight {
+  border-right: 1px solid rgba(var(--bs-emphasis-color-rgb), 0.05);
+} */

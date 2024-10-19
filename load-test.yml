@@ -1,0 +1,64 @@
+config:
+  # target: "http://171.244.39.87:30210"  # Thay thế bằng URL của API của bạn
+  target: "https://test.vietlonghung.com.vn"  # Thay thế bằng URL của API của bạn
+  # target: "http://27.71.27.234:30210"  # Thay thế bằng URL của API của bạn
+  # target: "http://localhost:30210"  # Thay thế bằng URL của API của bạn
+  # target: "https://anca.vietlonghung.com.vn"  # Thay thế bằng URL của API của bạn
+
+  phases:
+    - duration: 1 # Thời gian chạy kiểm tra (giây)
+      arrivalRate: 2000  # Số người dùng mới mỗi giây
+      maxVusers: 2000  # Số người dùng tối đa đồng thời
+scenarios:
+  - flow:
+      - get:
+          url: "/api/chitrong/active-chitrong-ql/09457"  # Thay thế bằng endpoint cụ thể của API
+          # url: "/employeelist"  # Thay thế bằng endpoint cụ thể của API
+
+# config:
+#   target: "http://localhost"
+#   phases:
+#     - duration: 1 # Thời gian chạy kiểm tra (giây)
+#       arrivalRate: 3500  # Số người dùng mới mỗi giây (3500 / 4)
+#       maxVusers: 3500  # Số người dùng tối đa đồng thời (1000 / 4)
+# scenarios:
+#   - name: "Port 30210"
+#     weight: 100
+#     flow:
+#       - get:
+#           url: "http://localhost:30210/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30211"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30211/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30212"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30212/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30213"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30213/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30214"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30214/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30215"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30215/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30216"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30216/api/chitrong/active-chitrong/08480"
+  # - name: "Port 30217"
+  #   weight: 13
+  #   flow:
+  #     - get:
+  #         url: "http://localhost:30217/api/chitrong/active-chitrong/08480"

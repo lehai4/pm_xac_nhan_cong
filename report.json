@@ -1,0 +1,319 @@
+{
+  "aggregate": {
+    "counters": {
+      "vusers.created_by_name.0": 2000,
+      "vusers.created": 2000,
+      "http.requests": 2000,
+      "http.codes.200": 1413,
+      "http.responses": 1413,
+      "http.downloaded_bytes": 1223658,
+      "plugins.metrics-by-endpoint./api/chitrong/active-chitrong-ql/09457.codes.200": 1413,
+      "vusers.failed": 587,
+      "vusers.completed": 1413,
+      "plugins.metrics-by-endpoint./api/chitrong/active-chitrong-ql/09457.errors.ETIMEDOUT": 587,
+      "errors.ETIMEDOUT": 587
+    },
+    "rates": {
+      "http.request_rate": 1001
+    },
+    "firstCounterAt": 1727412256515,
+    "firstHistogramAt": 1727412256944,
+    "lastCounterAt": 1727412268134,
+    "lastHistogramAt": 1727412267691,
+    "firstMetricAt": 1727412256515,
+    "lastMetricAt": 1727412268134,
+    "period": 1727412260000,
+    "summaries": {
+      "http.response_time": {
+        "min": 11,
+        "max": 8141,
+        "count": 1413,
+        "mean": 1551.5,
+        "p50": 1274.3,
+        "median": 1274.3,
+        "p75": 2231,
+        "p90": 2671,
+        "p95": 3984.7,
+        "p99": 6838,
+        "p999": 7709.8
+      },
+      "plugins.metrics-by-endpoint.response_time./api/chitrong/active-chitrong-ql/09457": {
+        "min": 11,
+        "max": 8141,
+        "count": 1413,
+        "mean": 1551.5,
+        "p50": 1274.3,
+        "median": 1274.3,
+        "p75": 2231,
+        "p90": 2671,
+        "p95": 3984.7,
+        "p99": 6838,
+        "p999": 7709.8
+      },
+      "vusers.session_length": {
+        "min": 386.8,
+        "max": 10012.5,
+        "count": 1413,
+        "mean": 5080.4,
+        "p50": 5065.6,
+        "median": 5065.6,
+        "p75": 7709.8,
+        "p90": 8692.8,
+        "p95": 9230.4,
+        "p99": 9999.2,
+        "p999": 9999.2
+      }
+    },
+    "histograms": {
+      "http.response_time": {
+        "min": 11,
+        "max": 8141,
+        "count": 1413,
+        "mean": 1551.5,
+        "p50": 1274.3,
+        "median": 1274.3,
+        "p75": 2231,
+        "p90": 2671,
+        "p95": 3984.7,
+        "p99": 6838,
+        "p999": 7709.8
+      },
+      "plugins.metrics-by-endpoint.response_time./api/chitrong/active-chitrong-ql/09457": {
+        "min": 11,
+        "max": 8141,
+        "count": 1413,
+        "mean": 1551.5,
+        "p50": 1274.3,
+        "median": 1274.3,
+        "p75": 2231,
+        "p90": 2671,
+        "p95": 3984.7,
+        "p99": 6838,
+        "p999": 7709.8
+      },
+      "vusers.session_length": {
+        "min": 386.8,
+        "max": 10012.5,
+        "count": 1413,
+        "mean": 5080.4,
+        "p50": 5065.6,
+        "median": 5065.6,
+        "p75": 7709.8,
+        "p90": 8692.8,
+        "p95": 9230.4,
+        "p99": 9999.2,
+        "p999": 9999.2
+      }
+    }
+  },
+  "intermediate": [
+    {
+      "counters": {
+        "vusers.created_by_name.0": 2000,
+        "vusers.created": 2000,
+        "http.requests": 2000,
+        "http.codes.200": 352,
+        "http.responses": 352,
+        "http.downloaded_bytes": 304832,
+        "plugins.metrics-by-endpoint./api/chitrong/active-chitrong-ql/09457.codes.200": 352,
+        "vusers.failed": 0,
+        "vusers.completed": 352
+      },
+      "rates": {
+        "http.request_rate": 2000
+      },
+      "http.request_rate": null,
+      "firstCounterAt": 1727412256515,
+      "firstHistogramAt": 1727412256944,
+      "lastCounterAt": 1727412259997,
+      "lastHistogramAt": 1727412259997,
+      "firstMetricAt": 1727412256515,
+      "lastMetricAt": 1727412259997,
+      "period": "1727412250000",
+      "summaries": {
+        "http.response_time": {
+          "min": 69,
+          "max": 2909,
+          "count": 352,
+          "mean": 1426.3,
+          "p50": 1300.1,
+          "median": 1300.1,
+          "p75": 2276.1,
+          "p90": 2566.3,
+          "p95": 2671,
+          "p99": 2671,
+          "p999": 2836.2
+        },
+        "plugins.metrics-by-endpoint.response_time./api/chitrong/active-chitrong-ql/09457": {
+          "min": 69,
+          "max": 2909,
+          "count": 352,
+          "mean": 1426.3,
+          "p50": 1300.1,
+          "median": 1300.1,
+          "p75": 2276.1,
+          "p90": 2566.3,
+          "p95": 2671,
+          "p99": 2671,
+          "p999": 2836.2
+        },
+        "vusers.session_length": {
+          "min": 386.8,
+          "max": 3067.4,
+          "count": 352,
+          "mean": 1854.2,
+          "p50": 1790.4,
+          "median": 1790.4,
+          "p75": 2618.1,
+          "p90": 2893.5,
+          "p95": 2951.9,
+          "p99": 3011.6,
+          "p999": 3072.4
+        }
+      },
+      "histograms": {
+        "http.response_time": {
+          "min": 69,
+          "max": 2909,
+          "count": 352,
+          "mean": 1426.3,
+          "p50": 1300.1,
+          "median": 1300.1,
+          "p75": 2276.1,
+          "p90": 2566.3,
+          "p95": 2671,
+          "p99": 2671,
+          "p999": 2836.2
+        },
+        "plugins.metrics-by-endpoint.response_time./api/chitrong/active-chitrong-ql/09457": {
+          "min": 69,
+          "max": 2909,
+          "count": 352,
+          "mean": 1426.3,
+          "p50": 1300.1,
+          "median": 1300.1,
+          "p75": 2276.1,
+          "p90": 2566.3,
+          "p95": 2671,
+          "p99": 2671,
+          "p999": 2836.2
+        },
+        "vusers.session_length": {
+          "min": 386.8,
+          "max": 3067.4,
+          "count": 352,
+          "mean": 1854.2,
+          "p50": 1790.4,
+          "median": 1790.4,
+          "p75": 2618.1,
+          "p90": 2893.5,
+          "p95": 2951.9,
+          "p99": 3011.6,
+          "p999": 3072.4
+        }
+      }
+    },
+    {
+      "counters": {
+        "http.codes.200": 1061,
+        "http.responses": 1061,
+        "http.downloaded_bytes": 918826,
+        "plugins.metrics-by-endpoint./api/chitrong/active-chitrong-ql/09457.codes.200": 1061,
+        "vusers.failed": 587,
+        "vusers.completed": 1061,
+        "plugins.metrics-by-endpoint./api/chitrong/active-chitrong-ql/09457.errors.ETIMEDOUT": 587,
+        "errors.ETIMEDOUT": 587
+      },
+      "rates": {},
+      "firstCounterAt": 1727412260001,
+      "firstHistogramAt": 1727412260001,
+      "lastCounterAt": 1727412268134,
+      "lastHistogramAt": 1727412267691,
+      "firstMetricAt": 1727412260001,
+      "lastMetricAt": 1727412268134,
+      "period": "1727412260000",
+      "summaries": {
+        "http.response_time": {
+          "min": 11,
+          "max": 8141,
+          "count": 1061,
+          "mean": 1593,
+          "p50": 1274.3,
+          "median": 1274.3,
+          "p75": 2231,
+          "p90": 3072.4,
+          "p95": 4231.1,
+          "p99": 6838,
+          "p999": 7709.8
+        },
+        "plugins.metrics-by-endpoint.response_time./api/chitrong/active-chitrong-ql/09457": {
+          "min": 11,
+          "max": 8141,
+          "count": 1061,
+          "mean": 1593,
+          "p50": 1274.3,
+          "median": 1274.3,
+          "p75": 2231,
+          "p90": 3072.4,
+          "p95": 4231.1,
+          "p99": 6838,
+          "p999": 7709.8
+        },
+        "vusers.session_length": {
+          "min": 1934.6,
+          "max": 10012.5,
+          "count": 1061,
+          "mean": 6150.7,
+          "p50": 5598.4,
+          "median": 5598.4,
+          "p75": 8024.5,
+          "p90": 9047.6,
+          "p95": 9607.1,
+          "p99": 9999.2,
+          "p999": 9999.2
+        }
+      },
+      "histograms": {
+        "http.response_time": {
+          "min": 11,
+          "max": 8141,
+          "count": 1061,
+          "mean": 1593,
+          "p50": 1274.3,
+          "median": 1274.3,
+          "p75": 2231,
+          "p90": 3072.4,
+          "p95": 4231.1,
+          "p99": 6838,
+          "p999": 7709.8
+        },
+        "plugins.metrics-by-endpoint.response_time./api/chitrong/active-chitrong-ql/09457": {
+          "min": 11,
+          "max": 8141,
+          "count": 1061,
+          "mean": 1593,
+          "p50": 1274.3,
+          "median": 1274.3,
+          "p75": 2231,
+          "p90": 3072.4,
+          "p95": 4231.1,
+          "p99": 6838,
+          "p999": 7709.8
+        },
+        "vusers.session_length": {
+          "min": 1934.6,
+          "max": 10012.5,
+          "count": 1061,
+          "mean": 6150.7,
+          "p50": 5598.4,
+          "median": 5598.4,
+          "p75": 8024.5,
+          "p90": 9047.6,
+          "p95": 9607.1,
+          "p99": 9999.2,
+          "p999": 9999.2
+        }
+      }
+    }
+  ]
+}

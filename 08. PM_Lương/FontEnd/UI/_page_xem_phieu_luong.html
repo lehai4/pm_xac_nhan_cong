@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords"
+		content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="img/photos/icon1.jpg" />
+
+	<link rel="canonical" href="https://demo-basic.adminkit.io/" />
+
+	<title>Trang chủ | Trang tiện ích nội bộ VLH</title>
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<link href="css/app.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+	<!-- Latest compiled and minified CSS -->
+
+</head>
+
+<body>
+	<div class="wrapper">
+		<nav id="sidebar" class="sidebar js-sidebar">
+			<div class="sidebar-content js-simplebar">
+				<a class="sidebar-brand" href="index.html">
+					<span class="align-middle">Chức năng</span>
+				</a>
+
+				<ul class="sidebar-nav">
+					<li class="sidebar-header">
+						Quản trị
+					</li>
+
+					<li class="sidebar-item active">
+						<a class="sidebar-link" href="index.html">
+							<i class="align-middle" data-feather="activity"></i> <span class="align-middle">Thống
+								kê</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="pages-profile.html">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Quản lý người
+								dùng</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="pages-sign-in.html">
+							<i class="align-middle" data-feather="upload"></i> <span class="align-middle">Tải lên bảng
+								lương</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="pages-sign-up.html">
+							<i class="align-middle" data-feather="settings"></i> <span class="align-middle">Thiết
+								lập</span>
+						</a>
+					</li>
+
+					<li class="sidebar-header">
+						Lương
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="ui-buttons.html">
+							<i class="align-middle" data-feather="file-text"></i> <span class="align-middle">Hướng dẫn
+								sử dụng</span>
+						</a>
+					</li>
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="ui-buttons.html">
+							<i class="align-middle" data-feather="list"></i> <span class="align-middle">Xác nhận
+								công</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="ui-forms.html">
+							<i class="align-middle" data-feather="dollar-sign"></i> <span class="align-middle">Phiếu
+								lương</span>
+						</a>
+					</li>
+
+
+			</div>
+		</nav>
+
+		<div class="main">
+			<nav class="navbar navbar-expand navbar-light navbar-bg">
+				<a class="sidebar-toggle js-sidebar-toggle">
+					<i class="hamburger align-self-center"></i>
+				</a>
+
+				<div class="navbar-collapse collapse">
+					<ul class="navbar-nav navbar-align">
+						<li class="nav-item dropdown">
+							<a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-bs-toggle="dropdown">
+								<i class="align-middle" data-feather="settings"></i>
+							</a>
+
+							<a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
+								<img src="img/avatars/avatar.jpg" class="avatar img-fluid rounded me-1" alt="Charles Hall" /> <span
+									class="text-dark">Tên người dùng</span>
+							</a>
+							<div class="dropdown-menu dropdown-menu-end">
+								<a class="dropdown-item" href="pages-profile.html"><i class="align-middle me-1" data-feather="user"></i>
+									Profile</a>
+								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="pie-chart"></i>
+									Analytics</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="index.html"><i class="align-middle me-1" data-feather="settings"></i>
+									Settings & Privacy</a>
+								<a class="dropdown-item" href="#"><i class="align-middle me-1" data-feather="help-circle"></i> Help
+									Center</a>
+								<div class="dropdown-divider"></div>
+								<a class="dropdown-item" href="#">Log out</a>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			<main class="content">
+				<div class="container-fluid p-0 px-md-15">
+
+					<div id="modal-time-alert" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Thông báo</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<p>Bạn có thời gian <strong style="color:red">10 phút</strong> để xem và xác nhận
+										phiếu lương này.</p>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tiếp tục
+										xem</button>
+									<!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="modal-confirm" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Xác nhận</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<p>Bạn đồng ý xác nhận mọi thông tin trong lương chính xác?</p>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+									<button type="button" class="btn btn-primary">Xác nhận</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="modal-feedback" class="modal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+						aria-hidden="true">
+						<div class="modal-dialog modal-dialog-centered">
+							<div class="modal-content">
+								<div class="modal-header">
+									<h5 class="modal-title">Gửi phản hồi</h5>
+									<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+								</div>
+								<div class="modal-body">
+									<div class="col-12">
+										<label for="content-feedback" class="form-label">Nội dung phản hồi</label>
+										<textarea rows="4" class="form-control new-range-date-time" id="content-feedback"
+											name="content-feedback" required=""></textarea>
+										<div class="invalid-tooltip">
+											Vui lòng chọn tháng
+										</div>
+									</div>
+								</div>
+								<div class="modal-footer">
+									<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huỷ</button>
+									<button type="button" class="btn btn-primary">Gửi</button>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div id="phieu1" class="container bg-tab p-4 text-black fs-4">
+						<div class="row mb-3">
+							<div class="col-12">
+								<h4 class="text-center fw-bold mb-2">BẢNG LƯƠNG CÁ NHÂN T06/2024</h4>
+								<h4 class="text-center fw-bold">Ngày thanh toán 08/07/2024</h4>
+							</div>
+						</div>
+						<div class="row g-2 bg-salary-payslip">
+							<div class="col-6">Họ tên:</div>
+							<div class="col-6 fw-bold">TRỊNH ANH NAM</div>
+							<div class="col-6">Số thẻ:</div>
+							<div class="col-6 fw-bold">LH00073</div>
+							<div class="col-6">Đơn vị:</div>
+							<div class="col-6 fw-bold">LH CÔNG NHÂN</div>
+							<div class="col-6">Mã số thuế:</div>
+							<div class="col-6 fw-bold">8493361171</div>
+						</div>
+						<hr class="" />
+						<div class="row g-2 bg-salary-payslip">
+							<div class="col-8">Mức lương hợp đồng lao động:</div>
+							<div class="col-4 fw-bold text-end">4,048,000</div>
+							<div class="col-8">Giờ công thực tế:</div>
+							<div class="col-4 fw-bold text-end">208</div>
+							<div class="col-8">Giờ công TT7/CB/CT:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Giờ công giãn ca:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Giờ công ngày nghỉ:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Giờ công phép + Giờ công thời gian:</div>
+							<div class="col-4 fw-bold text-end">2</div>
+							<div class="col-8">Giờ huấn luyện:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Lương thời gian + lương phép:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Lương trực tiếp:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Lương gián tiếp:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phụ cấp làm đêm:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Làm thêm ngày thường:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Làm thêm ngày nghỉ:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thưởng kết quả sản xuất:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thưởng cán bộ công nhân viên giỏi:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phụ cấp kiêm việc:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Trợ cấp con nhỏ:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phục cấp đi lại, xăng xe:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phụ cấp tiền ăn:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thưởng hoàn thành kết hoạch tháng:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thưởng hoàn thành kết hoạch ngày:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Bổ sung để tròn số đơn vị chi Tiền mặt:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Các khoản khác:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+						</div>
+						<hr class="" />
+						<div class="row g-2 bg-salary-payslip-1">
+							<div class="col-8">Lương tổng cộng:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thuế thu nhập:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Bảo hiểm:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thu hồi phép:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Cuối kỳ:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+						</div>
+						<div class="row justify-content-center mt-4">
+							<div class="col-6">
+								<button type="submit" class="btn btn-lg btn-success w-100 h-100">Xác nhận phiếu lương
+								</button>
+							</div>
+							<div class="col-6">
+								<button type="submit" class="btn btn-lg btn-primary w-100 h-100">Gửi thắc mắc
+								</button>
+							</div>
+						</div>
+
+					</div>
+					<div id="phieu2" class="container bg-tab p-4 text-black fs-4">
+						<div class="row mb-3">
+							<div class="col-12">
+								<h4 class="text-center fw-bold mb-2">BẢNG LƯƠNG CÁ NHÂN T06/2024</h4>
+								<h4 class="text-center fw-bold">Ngày thanh toán 08/07/2024</h4>
+							</div>
+						</div>
+						<div class="row g-2 bg-salary-payslip">
+							<div class="col-6">Họ tên:</div>
+							<div class="col-6 fw-bold">TRỊNH ANH NAM</div>
+							<div class="col-6">Số thẻ:</div>
+							<div class="col-6 fw-bold">LH00073</div>
+						</div>
+						<hr class="" />
+						<div class="row g-2 bg-salary-payslip">
+							<div class="col-8">Giờ công giãn ca:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Giờ công ngày nghỉ:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phụ cấp làm đêm:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Làm thêm ngày thường:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Làm thêm ngày nghỉ:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Thưởng kết quả sản xuất:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phục cấp đi lại, xăng xe:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Phụ cấp tiền ăn:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Bổ sung để tròn số đơn vị chi Tiền mặt:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+							<div class="col-8">Các khoản khác:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+						</div>
+						<hr class="" />
+						<div class="row g-2 bg-salary-payslip">
+							<div class="col-8">Thực lãnh:</div>
+							<div class="col-4 fw-bold text-end">0</div>
+						</div>
+						<div class="row justify-content-center mt-4">
+							<div class="col-6">
+								<button type="submit" class="btn btn-lg btn-success w-100 h-100">Xác nhận phiếu lương
+								</button>
+							</div>
+							<div class="col-6">
+								<button type="submit" class="btn btn-lg btn-primary w-100 h-100">Gửi thắc mắc
+								</button>
+							</div>
+						</div>
+
+					</div>
+			</main>
+
+
+		</div>
+	</div>
+
+	<script>
+		$(function () {
+			var myModal = new bootstrap.Modal(document.querySelector("#modal-time-alert"));
+			//myModal.show();
+
+			var myModal1 = new bootstrap.Modal(document.querySelector("#modal-feedback"));
+			//myModal1.show();
+
+			var myModal2 = new bootstrap.Modal(document.querySelector("#modal-confirm"));
+			//myModal2.show();
+		});
+	</script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="js/app.js"></script>
+
+</body>
