@@ -148,6 +148,7 @@ exports.getDashboardStats = async (req, res) => {
 
 exports.createStatusCong = async (req, res) => {
   try {
+    console.log("body", req.body);
     const newStatusCongIds = await StatusCong.createStatusCongTonTai(req.body);
     res.status(201).json({ ids: newStatusCongIds });
   } catch (error) {
@@ -185,15 +186,28 @@ exports.getStatusCongOutPageGCGC = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
+exports.getStatusCongOutPageMain = async (req, res) => {
+  try {
+    const { id_dot, id_main } = req.params;
+    const StatusCongData = await StatusCong.getStatusCongOutPageMain(
+      id_dot,
+      id_main
+    );
+    console.log("getStatusCongOutPageMain", StatusCongData);
+    res.status(200).json(StatusCongData);
+  } catch (error) {
+    console.error("Error fetching StatusCong:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 exports.updateStatusCongXinGiaHan = async (req, res) => {
   console.log("req.params", req.params);
   console.log("req.body", req.body);
   try {
-    const { id_hst_gcgc, id_dot } = req.params; // Giả sử bạn đã thêm các tham số này vào đường dẫn URL
+    const { id_hst_gcgc_main, id_dot } = req.params; // Giả sử bạn đã thêm các tham số này vào đường dẫn URL
     const { xin_gia_han } = req.body;
     const isUpdated = await StatusCong.updateStatusCongXinGiaHan(
-      id_hst_gcgc,
+      id_hst_gcgc_main,
       id_dot,
       xin_gia_han
     );
@@ -211,10 +225,10 @@ exports.updateStatusCongXinGiaHan = async (req, res) => {
 };
 
 exports.checkExtensionRequested = async (req, res) => {
-  const { id_hst_gcgc, id_dot } = req.params;
+  const { id_hst_gcgc_main, id_dot } = req.params;
   try {
     const extensionStatus = await StatusCong.getExtensionStatus(
-      id_hst_gcgc,
+      id_hst_gcgc_main,
       id_dot
     );
     res.status(200).json({ hasRequestedExtension: extensionStatus });
@@ -238,7 +252,20 @@ exports.getStatusCongComplaintsGCGC = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
+exports.getStatusCongComplaintsMain = async (req, res) => {
+  try {
+    const { id_dot, id_main } = req.params;
+    const StatusCongData = await StatusCong.getStatusCongComplaintsMain(
+      id_dot,
+      id_main
+    );
+    console.log("getStatusCongComplaintsMain", StatusCongData);
+    res.status(200).json(StatusCongData);
+  } catch (error) {
+    console.error("Error fetching StatusCong:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 exports.getStatusCongComplaints = async (req, res) => {
   try {
     const { id_dot, id_hst } = req.params;

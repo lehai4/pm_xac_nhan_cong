@@ -254,6 +254,7 @@ const StatusCong = {
         const {
           id_he_so_thuong,
           id_gio_cong_gian_ca,
+          id_cong_main,
           id_dot,
           time_con_lai,
           tinh_trang,
@@ -280,19 +281,21 @@ const StatusCong = {
         // Kiểm tra xem status đã tồn tại chưa
         const [existingStatus] = await connection.query(
           `SELECT * FROM pm_cong_status_cong 
-           WHERE id_dot = ? AND (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ?)`,
-          [id_dot, id_he_so_thuong, id_gio_cong_gian_ca]
+           WHERE id_dot = ? AND (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ? OR id_cong_main = ?)`,
+          [id_dot, id_he_so_thuong, id_gio_cong_gian_ca, id_cong_main]
         );
 
         if (existingStatus.length === 0) {
+          console.log("chưa Tồn tại...");
           // Nếu chưa tồn tại, thêm mới (giữ nguyên như cũ)
           await connection.query(
             `INSERT INTO pm_cong_status_cong (
-              id_he_so_thuong, id_gio_cong_gian_ca, id_dot, time_con_lai, tinh_trang, noi_dung_kn, tinh_trang_ns_khieu_nai, tinh_trang_nld_khieu_nai, last_modified, nguoi_nhap, ly_do, create_time, xin_gia_han
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
+              id_he_so_thuong, id_gio_cong_gian_ca, id_cong_main, id_dot, time_con_lai, tinh_trang, noi_dung_kn, tinh_trang_ns_khieu_nai, tinh_trang_nld_khieu_nai, last_modified, nguoi_nhap, ly_do, create_time, xin_gia_han
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
             [
               id_he_so_thuong,
               id_gio_cong_gian_ca,
+              id_cong_main,
               id_dot,
               time_con_lai,
               tinh_trang,
@@ -307,6 +310,7 @@ const StatusCong = {
             ]
           );
         } else {
+          console.log("Tồn tại rồi...");
           // Nếu đã tồn tại, chỉ cập nhật các trường được truyền vào
           let updateQuery = "UPDATE pm_cong_status_cong SET ";
           const updateValues = [];
@@ -356,8 +360,13 @@ const StatusCong = {
           if (updateFields.length > 0) {
             updateQuery += updateFields.join(", ");
             updateQuery +=
-              " WHERE id_dot = ? AND (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ?)";
-            updateValues.push(id_dot, id_he_so_thuong, id_gio_cong_gian_ca);
+              " WHERE id_dot = ? AND (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ? OR id_cong_main = ?)";
+            updateValues.push(
+              id_dot,
+              id_he_so_thuong,
+              id_gio_cong_gian_ca,
+              id_cong_main
+            );
 
             await connection.query(updateQuery, updateValues);
           }
@@ -390,6 +399,14 @@ const StatusCong = {
     return rows;
   },
 
+  getStatusCongOutPageMain: async (id_dot, id_main) => {
+    const [rows] = await db.query(
+      "SELECT * FROM pm_cong_status_cong WHERE id_dot = ? and id_cong_main = ? and tinh_trang = 'Tắt trang'",
+      [id_dot, id_main]
+    );
+    return rows;
+  },
+
   getStatusCongComplaints: async (id_dot, id_hst) => {
     const [rows] = await db.query(
       "SELECT * FROM pm_cong_status_cong WHERE id_dot = ? and id_he_so_thuong = ? and tinh_trang = 'Câu hỏi' AND tinh_trang_ns_khieu_nai = 'Cập nhật lại dữ liệu'",
@@ -405,7 +422,13 @@ const StatusCong = {
     );
     return rows;
   },
-
+  getStatusCongComplaintsMain: async (id_dot, id_main) => {
+    const [rows] = await db.query(
+      "SELECT * FROM pm_cong_status_cong WHERE id_dot = ? and id_cong_main = ? and tinh_trang = 'Câu hỏi' AND tinh_trang_ns_khieu_nai = 'Cập nhật lại dữ liệu'",
+      [id_dot, id_main]
+    );
+    return rows;
+  },
   updateStatusCong: async (id, user) => {
     const updateFields = [];
     const updateValues = [];
@@ -468,17 +491,18 @@ const StatusCong = {
     return rows[0];
   },
 
-  updateStatusCongXinGiaHan: async (id_hst_gcgc, id_dot, xin_gia_han) => {
+  updateStatusCongXinGiaHan: async (id_hst_gcgc_main, id_dot, xin_gia_han) => {
     const query = `
       UPDATE pm_cong_status_cong 
       SET xin_gia_han = ?, last_modified = ? 
-      WHERE (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ?) AND id_dot = ?
+      WHERE (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ? OR id_cong_main = ? ) AND id_dot = ?
     `;
     const updateValues = [
       xin_gia_han,
       moment().format("YYYY-MM-DD HH:mm:ss"),
-      id_hst_gcgc,
-      id_hst_gcgc,
+      id_hst_gcgc_main,
+      id_hst_gcgc_main,
+      id_hst_gcgc_main,
       id_dot,
     ];
 
@@ -492,10 +516,15 @@ const StatusCong = {
   },
 
   // Thêm hàm này vào model Statuscong
-  getExtensionStatus: async (id_hst_gcgc, id_dot) => {
-    const query = `SELECT xin_gia_han FROM pm_cong_status_cong WHERE (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ?) AND id_dot = ?`;
+  getExtensionStatus: async (id_hst_gcgc_main, id_dot) => {
+    const query = `SELECT xin_gia_han FROM pm_cong_status_cong WHERE (id_he_so_thuong = ? OR id_gio_cong_gian_ca = ? OR id_cong_main = ?) AND id_dot = ?`;
     try {
-      const [rows] = await db.query(query, [id_hst_gcgc, id_hst_gcgc, id_dot]);
+      const [rows] = await db.query(query, [
+        id_hst_gcgc_main,
+        id_hst_gcgc_main,
+        id_hst_gcgc_main,
+        id_dot,
+      ]);
       return rows.length > 0 ? rows[0].xin_gia_han : null;
     } catch (error) {
       console.error("Error fetching extension status:", error);

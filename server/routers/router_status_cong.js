@@ -19,16 +19,23 @@ router.get(
   "/out-pagegcgc/:id_dot/:id_gcgc",
   StatusCong.getStatusCongOutPageGCGC
 );
+router.get(
+  "/out-page-main/:id_dot/:id_main",
+  StatusCong.getStatusCongOutPageMain
+);
 
 router.get("/complaints/:id_dot/:id_hst", StatusCong.getStatusCongComplaints);
 router.get(
   "/complaintsgcgc/:id_dot/:id_gcgc",
   StatusCong.getStatusCongComplaintsGCGC
 );
-
+router.get(
+  "/complaints-main/:id_dot/:id_main",
+  StatusCong.getStatusCongComplaintsMain
+);
 // Thêm dòng này vào file router của bạn
 router.get(
-  "/check-extension/:id_hst_gcgc/:id_dot",
+  "/check-extension/:id_hst_gcgc_main/:id_dot",
   StatusCong.checkExtensionRequested
 );
 // Delete
@@ -36,7 +43,7 @@ router.delete("/:id", StatusCong.deleteStatusCong);
 // Update
 router.put("/:id", StatusCong.updateStatusCong);
 router.put(
-  "/update-status-cong-xin-gia-han/:id_hst_gcgc/:id_dot",
+  "/update-status-cong-xin-gia-han/:id_hst_gcgc_main/:id_dot",
   StatusCong.updateStatusCongXinGiaHan
 );
 

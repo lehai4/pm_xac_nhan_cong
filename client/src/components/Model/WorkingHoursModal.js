@@ -1,5 +1,194 @@
 import { useState } from "react";
 import { getDaysInMonth, formatNumber } from "../../utils";
+
+export const AttendanceTableHST = ({ data, dateInput }) => {
+  const days = getDaysInMonth(dateInput);
+
+  const daysData = [
+    data.cot1,
+    data.cot2,
+    data.cot3,
+    data.cot4,
+    data.cot5,
+    data.cot6,
+    data.cot7,
+    data.cot8,
+    data.cot9,
+    data.cot10,
+    data.cot11,
+    data.cot12,
+    data.cot13,
+    data.cot14,
+    data.cot15,
+    data.cot16,
+    data.cot17,
+    data.cot18,
+    data.cot19,
+    data.cot20,
+    data.cot21,
+    data.cot22,
+    data.cot23,
+    data.cot24,
+    data.cot25,
+    data.cot26,
+    data.cot27,
+    data.cot28,
+    data.cot29,
+    data.cot30,
+    data.cot31,
+  ].slice(0, days);
+
+  return (
+    <div className="overflow-y-scroll" style={{ height: 300 }}>
+      <table className="table table-striped h-100" border="1">
+        <tbody>
+          {daysData.map((dayData, index) => (
+            <tr key={index}>
+              <td>Ngày {index + 1}:</td>
+              <td className="text-end">
+                {dayData !== null ? formatNumber(dayData) : 0}
+              </td>
+            </tr>
+          ))}
+          <tr>
+            <td>VPCL:</td>
+            <td className="text-end">{formatNumber(data.vpcl)}</td>
+          </tr>
+          <tr>
+            <td>VPKL:</td>
+            <td className="text-end">{formatNumber(data.vpkl)}</td>
+          </tr>
+          <tr>
+            <td>O:</td>
+            <td className="text-end">{formatNumber(data.o)}</td>
+          </tr>
+          <tr>
+            <td>HSBQ:</td>
+            <td className="text-end">{formatNumber(data.hsbq)}</td>
+          </tr>
+          <tr>
+            <td>HSBQTHG:</td>
+            <td className="text-end">{formatNumber(data.hsbqthg)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export const AttendanceMain = ({ data }) => {
+  return (
+    <div className="overflow-y-scroll" style={{ height: 300 }}>
+      <table className="table table-striped h-100">
+        <tbody>
+          <tr>
+            <td>Hành chính + Ca1 + Ca2:</td>
+            <td className="text-end">
+              {formatNumber(data.hanh_chinh_ca1_ca2)}
+            </td>
+          </tr>
+          <tr>
+            <td>Ca3:</td>
+            <td className="text-end">{formatNumber(data.ca3)}</td>
+          </tr>
+          <tr>
+            <td>Ngày thường:</td>
+            <td className="text-end">{formatNumber(data.ngay_thuong)}</td>
+          </tr>
+          <tr>
+            <td>Ngày nghỉ hàng tuần:</td>
+            <td className="text-end">
+              {formatNumber(data.ngay_nghi_hang_tuan)}
+            </td>
+          </tr>
+          <tr>
+            <td>Ngày lễ:</td>
+            <td className="text-end">{formatNumber(data.ngay_le)}</td>
+          </tr>
+          <tr>
+            <td>Giờ công thai thứ 7:</td>
+            <td className="text-end">{formatNumber(data.gc_thai_thu_7)}</td>
+          </tr>
+          <tr>
+            <td>Giờ công nuôi con nhỏ:</td>
+            <td className="text-end">{formatNumber(data.gc_nuoi_con_nho)}</td>
+          </tr>
+          <tr>
+            <td>Giờ công người cao tuổi:</td>
+            <td className="text-end">{formatNumber(data.gc_nguoi_cao_tuoi)}</td>
+          </tr>
+          <tr>
+            <td>Giờ công công tác:</td>
+            <td className="text-end">{formatNumber(data.gc_cong_tac)}</td>
+          </tr>
+          <tr>
+            <td>Phép(giờ):</td>
+            <td className="text-end">{formatNumber(data.phep)}</td>
+          </tr>
+          <tr>
+            <td>Ốm(giờ):</td>
+            <td className="text-end">{formatNumber(data.om)}</td>
+          </tr>
+          <tr>
+            <td>Con ốm(giờ):</td>
+            <td className="text-end">{formatNumber(data.con_om)}</td>
+          </tr>
+          <tr>
+            <td>Việc riêng có lương(giờ):</td>
+            <td className="text-end">
+              {formatNumber(data.viec_rieng_co_luong)}
+            </td>
+          </tr>
+          <tr>
+            <td>Việc riêng không lương(giờ):</td>
+            <td className="text-end">
+              {formatNumber(data.viec_rieng_khong_luong)}
+            </td>
+          </tr>
+          <tr>
+            <td>Không lý do(giờ):</td>
+            <td className="text-end">{formatNumber(data.khong_ly_do)}</td>
+          </tr>
+          <tr>
+            <td>Việc riêng không lương(giờ):</td>
+            <td className="text-end">
+              {formatNumber(data.viec_rieng_khong_luong)}
+            </td>
+          </tr>
+          <tr>
+            <td>Khám thai(giờ):</td>
+            <td className="text-end">{formatNumber(data.kham_thai)}</td>
+          </tr>
+          <tr>
+            <td>Thai sản(giờ):</td>
+            <td className="text-end">{formatNumber(data.thai_san)}</td>
+          </tr>
+          <tr>
+            <td>Dưỡng sức(giờ):</td>
+            <td className="text-end">{formatNumber(data.duong_suc)}</td>
+          </tr>
+          <tr>
+            <td>Trong giờ:</td>
+            <td className="text-end">{formatNumber(data.trong_gio)}</td>
+          </tr>
+          <tr>
+            <td>Ngoài giờ:</td>
+            <td className="text-end">{formatNumber(data.ngoai_gio)}</td>
+          </tr>
+          <tr>
+            <td>Giờ công ngừng việc:</td>
+            <td className="text-end">{formatNumber(data.gc_ngung_viec)}</td>
+          </tr>
+          <tr>
+            <td>Giờ công nghỉ lễ:</td>
+            <td className="text-end">{formatNumber(data.gc_nghi_le)}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
 const WorkingHoursModal = (props) => {
   const { onClose, employee, currentView, setCurrentView } = props;
 
@@ -10,224 +199,6 @@ const WorkingHoursModal = (props) => {
       he_so_thuong[0].bang_cong_t ||
       gio_cong_gian_ca[0].bang_cong_t
   );
-
-  // console.log("congmain", cong_main);
-  // console.log("he_so_thuong", he_so_thuong);
-  // console.log("gio_cong_gian_ca", gio_cong_gian_ca);
-
-  const AttendanceTableHST = ({ data }) => {
-    const days = getDaysInMonth(dateInput);
-
-    const daysData = [
-      data.cot1,
-      data.cot2,
-      data.cot3,
-      data.cot4,
-      data.cot5,
-      data.cot6,
-      data.cot7,
-      data.cot8,
-      data.cot9,
-      data.cot10,
-      data.cot11,
-      data.cot12,
-      data.cot13,
-      data.cot14,
-      data.cot15,
-      data.cot16,
-      data.cot17,
-      data.cot18,
-      data.cot19,
-      data.cot20,
-      data.cot21,
-      data.cot22,
-      data.cot23,
-      data.cot24,
-      data.cot25,
-      data.cot26,
-      data.cot27,
-      data.cot28,
-      data.cot29,
-      data.cot30,
-      data.cot31,
-    ].slice(0, days);
-
-    return (
-      <div className="overflow-y-scroll" style={{ height: 300 }}>
-        <table className="table table-striped h-100" border="1">
-          <tbody>
-            {daysData.map((dayData, index) => (
-              <tr key={index}>
-                <td>Ngày {index + 1}:</td>
-                <td className="text-end">
-                  {dayData !== null ? formatNumber(dayData) : 0}
-                </td>
-              </tr>
-            ))}
-            <tr>
-              <td>VPCL:</td>
-              <td className="text-end">{formatNumber(data.vpcl)}</td>
-            </tr>
-            <tr>
-              <td>VPKL:</td>
-              <td className="text-end">{formatNumber(data.vpkl)}</td>
-            </tr>
-            <tr>
-              <td>O:</td>
-              <td className="text-end">{formatNumber(data.o)}</td>
-            </tr>
-            <tr>
-              <td>HSBQ:</td>
-              <td className="text-end">{formatNumber(data.hsbq)}</td>
-            </tr>
-            <tr>
-              <td>HSBQTHG:</td>
-              <td className="text-end">{formatNumber(data.hsbqthg)}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  };
-
-  const AttendanceMain = () => {
-    return (
-      <div className="overflow-y-scroll" style={{ height: 300 }}>
-        <table className="table table-striped h-100">
-          <tbody>
-            <tr>
-              <td>Hành chính + Ca1 + Ca2:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].hanh_chinh_ca1_ca2)}
-              </td>
-            </tr>
-            <tr>
-              <td>Ca3:</td>
-              <td className="text-end">{formatNumber(cong_main[0].ca3)}</td>
-            </tr>
-            <tr>
-              <td>Ngày thường:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].ngay_thuong)}
-              </td>
-            </tr>
-            <tr>
-              <td>Ngày nghỉ hàng tuần:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].ngay_nghi_hang_tuan)}
-              </td>
-            </tr>
-            <tr>
-              <td>Ngày lễ:</td>
-              <td className="text-end">{formatNumber(cong_main[0].ngay_le)}</td>
-            </tr>
-            <tr>
-              <td>Giờ công thai thứ 7:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].gc_thai_thu_7)}
-              </td>
-            </tr>
-            <tr>
-              <td>Giờ công nuôi con nhỏ:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].gc_nuoi_con_nho)}
-              </td>
-            </tr>
-            <tr>
-              <td>Giờ công người cao tuổi:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].gc_nguoi_cao_tuoi)}
-              </td>
-            </tr>
-            <tr>
-              <td>Giờ công công tác:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].gc_cong_tac)}
-              </td>
-            </tr>
-            <tr>
-              <td>Phép(giờ):</td>
-              <td className="text-end">{formatNumber(cong_main[0].phep)}</td>
-            </tr>
-            <tr>
-              <td>Ốm(giờ):</td>
-              <td className="text-end">{formatNumber(cong_main[0].om)}</td>
-            </tr>
-            <tr>
-              <td>Con ốm(giờ):</td>
-              <td className="text-end">{formatNumber(cong_main[0].con_om)}</td>
-            </tr>
-            <tr>
-              <td>Việc riêng có lương(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].viec_rieng_co_luong)}
-              </td>
-            </tr>
-            <tr>
-              <td>Việc riêng không lương(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].viec_rieng_khong_luong)}
-              </td>
-            </tr>
-            <tr>
-              <td>Không lý do(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].khong_ly_do)}
-              </td>
-            </tr>
-            <tr>
-              <td>Việc riêng không lương(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].viec_rieng_khong_luong)}
-              </td>
-            </tr>
-            <tr>
-              <td>Khám thai(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].kham_thai)}
-              </td>
-            </tr>
-            <tr>
-              <td>Thai sản(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].thai_san)}
-              </td>
-            </tr>
-            <tr>
-              <td>Dưỡng sức(giờ):</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].duong_suc)}
-              </td>
-            </tr>
-            <tr>
-              <td>Trong giờ:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].trong_gio)}
-              </td>
-            </tr>
-            <tr>
-              <td>Ngoài giờ:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].ngoai_gio)}
-              </td>
-            </tr>
-            <tr>
-              <td>Giờ công ngừng việc:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].gc_ngung_viec)}
-              </td>
-            </tr>
-            <tr>
-              <td>Giờ công nghỉ lễ:</td>
-              <td className="text-end">
-                {formatNumber(cong_main[0].gc_nghi_le)}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    );
-  };
 
   const renderContent = () => {
     switch (currentView) {
@@ -464,7 +435,7 @@ const WorkingHoursModal = (props) => {
                       </table>
                     </div> */}
                     {/* Dọc */}
-                    {AttendanceMain()}
+                    <AttendanceMain data={cong_main[0]} />
                   </div>
                 </div>
               </div>
@@ -639,7 +610,10 @@ const WorkingHoursModal = (props) => {
                       </table>
                     </div> */}
                     {/* dạng dọc */}
-                    <AttendanceTableHST data={he_so_thuong[0]} />
+                    <AttendanceTableHST
+                      data={he_so_thuong[0]}
+                      dateInput={dateInput}
+                    />
                   </div>
                 </div>
               </div>
