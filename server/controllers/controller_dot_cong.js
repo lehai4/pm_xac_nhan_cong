@@ -275,6 +275,50 @@ const dotCongController = {
     }
   },
 
+  getActiveHSTForEmployeeQL: async (req, res) => {
+    try {
+      const { maNV } = req.params;
+      const activeHST = await DotCong.getActiveHSTForEmployeeQL(maNV);
+      if (activeHST.length > 0) {
+        res.json(activeHST);
+      } else {
+        res.status(404).json({ message: "Không tìm thấy bản ghi phù hợp" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+  },
+
+  getActiveGCGCForEmployeeQL: async (req, res) => {
+    try {
+      const { maNV } = req.params;
+      const activeGCGC = await DotCong.getActiveGCGCForEmployeeQL(maNV);
+      if (activeGCGC.length > 0) {
+        res.json(activeGCGC);
+      } else {
+        res.status(404).json({ message: "Không tìm thấy bản ghi phù hợp" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+  },
+
+  getActiveMainForEmployeeQL: async (req, res) => {
+    try {
+      const { maNV } = req.params;
+      const activeMain = await DotCong.getActiveMainForEmployeeQL(maNV);
+      if (activeMain.length > 0) {
+        res.json(activeMain);
+      } else {
+        res.status(404).json({ message: "Không tìm thấy bản ghi phù hợp" });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: "Lỗi server", error: error.message });
+    }
+  },
   //get có body
   getActiveHeSoThuongForEmployeeSP: async (req, res) => {
     try {

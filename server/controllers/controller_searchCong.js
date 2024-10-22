@@ -274,39 +274,45 @@ exports.getCongsByTT = async (req, res) => {
 
 exports.getCongsTTByIDNV = async (req, res) => {
   try {
-    const { bang_luong_t, id_bo_phan } = req.params;
+    const { bang_cong_t, id_bo_phan } = req.params;
 
-    if (!bang_luong_t || !id_bo_phan) {
+    if (!bang_cong_t || !id_bo_phan) {
       return res.status(400).json({ message: "Thiếu thông tin cần thiết" });
     }
 
     const queryBase = `
-      SELECT DISTINCT d.id AS d_id,d.bang_luong_t AS d_bang_luong_t, d.loai_phieu AS d_loai_phieu, l.*
-      FROM pm_luong_dot d
-      LEFT JOIN ?? l ON d.id = l.id_dot
-      WHERE d.bang_luong_t = ? AND d.loai_phieu = ? AND l.ma_nv IN (
+      SELECT DISTINCT d.id AS d_id,d.bang_cong_t AS d_bang_cong_t, d.loai_phieu AS d_loai_phieu, l.*
+      FROM pm_cong_dot d
+      LEFT JOIN ?? l ON d.id = l.id_dot_cong
+      WHERE d.bang_cong_t = ? AND d.loai_phieu = ? AND l.so_the IN (
         SELECT nv.ma_nv
         FROM sync_data_hi_time_sheet.sync_nhan_vien nv
         WHERE nv.id_bo_phan =?
       )
     `;
 
-    const [resultscn] = await db.query(queryBase, [
-      "pm_luong_chi_ngoai",
-      bang_luong_t,
+    const [resultsMain] = await db.query(queryBase, [
+      "pm_cong_main",
+      bang_cong_t,
+      "3",
+      id_bo_phan,
+    ]);
+
+    const [resultsGCGC] = await db.query(queryBase, [
+      "pm_gio_cong_gian_ca",
+      bang_cong_t,
       "2",
       id_bo_phan,
     ]);
 
-    const [resultsct] = await db.query(queryBase, [
-      "pm_luong_chi_trong",
-      bang_luong_t,
+    const [resultsHST] = await db.query(queryBase, [
+      "pm_he_so_thuong",
+      bang_cong_t,
       "1",
       id_bo_phan,
     ]);
 
-    res.json({ resultscn, resultsct });
-    // console.log(resultscn.length, resultsct.length);
+    res.json({ resultsMain, resultsGCGC, resultsHST });
   } catch (error) {
     console.error("Error searching Cong:", error);
     res
@@ -317,18 +323,18 @@ exports.getCongsTTByIDNV = async (req, res) => {
 
 exports.getCongsQLByIDNV = async (req, res) => {
   try {
-    const { bang_luong_t, phutrach } = req.params;
+    const { bang_cong_t, phutrach } = req.params;
 
-    if (!bang_luong_t || !phutrach) {
+    if (!bang_cong_t || !phutrach) {
       return res.status(400).json({ message: "Thiếu thông tin cần thiết" });
     }
 
     const queryBase = `
-      SELECT DISTINCT d.id AS d_id,d.bang_luong_t AS d_bang_luong_t, d.loai_phieu AS d_loai_phieu, l.*
-      FROM pm_luong_dot d
+      SELECT DISTINCT d.id AS d_id,d.bang_cong_t AS d_bang_cong_t, d.loai_phieu AS d_loai_phieu, l.*
+      FROM pm_cong_dot d
       LEFT JOIN ?? l 
-			ON d.id = l.id_dot
-      WHERE d.bang_luong_t = ? AND d.loai_phieu = ? AND l.ma_nv IN (
+			ON d.id = l.id_dot_cong
+      WHERE d.bang_cong_t = ? AND d.loai_phieu = ? AND l.so_the IN (
         SELECT nv.ma_nv
         FROM sync_data_hi_time_sheet.sync_nhan_vien nv
 				LEFT JOIN pm_bo_phan_quan_ly_new bp_new
@@ -344,21 +350,28 @@ exports.getCongsQLByIDNV = async (req, res) => {
       )
     `;
 
-    const [resultscn] = await db.query(queryBase, [
-      "pm_luong_chi_ngoai",
-      bang_luong_t,
+    const [resultsMain] = await db.query(queryBase, [
+      "pm_cong_main",
+      bang_cong_t,
+      "3",
+      id_bo_phan,
+    ]);
+
+    const [resultsGCGC] = await db.query(queryBase, [
+      "pm_gio_cong_gian_ca",
+      bang_cong_t,
       "2",
-      phutrach,
+      id_bo_phan,
     ]);
 
-    const [resultsct] = await db.query(queryBase, [
-      "pm_luong_chi_trong",
-      bang_luong_t,
+    const [resultsHST] = await db.query(queryBase, [
+      "pm_he_so_thuong",
+      bang_cong_t,
       "1",
-      phutrach,
+      id_bo_phan,
     ]);
 
-    res.json({ resultscn, resultsct });
+    res.json({ resultsMain, resultsGCGC, resultsHST });
   } catch (error) {
     console.error("Error searching Cong:", error);
     res

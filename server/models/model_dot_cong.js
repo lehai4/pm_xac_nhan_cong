@@ -767,6 +767,60 @@ const DotCong = {
     }
   },
 
+  getActiveHSTForEmployeeQL: async (maNV) => {
+    const [rows] = await db.query(
+      `
+      SELECT ct.*,d.bang_cong_t
+      FROM pm_cong_dot as d,
+      pm_he_so_thuong as ct
+      LEFT JOIN pm_cong_status_cong as sl
+      ON sl.id_he_so_thuong = ct.id
+      WHERE d.id = ct.id_dot_cong
+      AND ct.so_the = ?
+      AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+07:00') >= d.time_start_ql
+      AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+07:00') <= d.time_end_ql
+    `,
+      [maNV]
+    );
+    return rows;
+  },
+
+  getActiveGCGCForEmployeeQL: async (maNV) => {
+    const [rows] = await db.query(
+      `
+      SELECT ct.*,d.bang_cong_t
+      FROM pm_cong_dot as d,
+      pm_gio_cong_gian_ca as ct
+      LEFT JOIN pm_cong_status_cong as sl
+      ON sl.id_gio_cong_gian_ca = ct.id
+      WHERE d.id = ct.id_dot_cong
+      AND ct.so_the = ?
+      AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+07:00') >= d.time_start_ql
+      AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+07:00') <= d.time_end_ql
+    `,
+      [maNV]
+    );
+    return rows;
+  },
+
+  getActiveMainForEmployeeQL: async (maNV) => {
+    const [rows] = await db.query(
+      `
+      SELECT ct.*,d.bang_cong_t
+      FROM pm_cong_dot as d,
+      pm_cong_main as ct
+      LEFT JOIN pm_cong_status_cong as sl
+      ON sl.id_cong_main = ct.id
+      WHERE d.id = ct.id_dot_cong
+      AND ct.so_the = ?
+      AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+07:00') >= d.time_start_ql
+      AND CONVERT_TZ(UTC_TIMESTAMP(), '+00:00', '+07:00') <= d.time_end_ql
+    `,
+      [maNV]
+    );
+    return rows;
+  },
+
   // có body
   getActiveHeSoThuongForEmployeeSP: async (maNV, month) => {
     const [rows] = await db.query(

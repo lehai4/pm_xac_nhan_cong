@@ -41,6 +41,15 @@ router.put("/save-hst", DotCong.saveHST);
 router.put("/save-gcgc", DotCong.saveGCGC);
 router.put("/:id", DotCong.updateDotCong);
 
+router.get("/active-he-so-thuong-ql/:maNV", DotCong.getActiveHSTForEmployeeQL);
+router.get(
+  "/active-gio-cong-gian-ca-ql/:maNV",
+  DotCong.getActiveGCGCForEmployeeQL
+);
+router.get(
+  "/active-gio-cong-main-ql/:maNV",
+  DotCong.getActiveMainForEmployeeQL
+);
 // có body
 router.post(
   "/active-he-so-thuong-sp/:maNV",

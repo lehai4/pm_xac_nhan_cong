@@ -7,11 +7,11 @@ router.get("/search", congController.searchCong);
 router.get("/search-by-tt/:phutrach", congController.getCongsByTT);
 router.get("/search-by-ql/:phutrach", congController.getCongsByQL);
 router.get(
-  "/search-by-tt-id/:bang_luong_t/:id_bo_phan",
+  "/search-by-tt-id/:bang_cong_t/:id_bo_phan",
   congController.getCongsTTByIDNV
 );
 router.get(
-  "/search-by-ql-id/:bang_luong_t/:phutrach",
+  "/search-by-ql-id/:bang_cong_t/:phutrach",
   congController.getCongsQLByIDNV
 );
 router.get("/complaint-details-hst", congController.getComplaintDetailsHST);

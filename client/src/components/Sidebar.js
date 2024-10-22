@@ -110,6 +110,54 @@ function Sidebar({ isCollapsed, isMobile, isOpen, onToggleSidebar }) {
               </li>
             </>
           )}
+          {(isQL || isTT) && (
+            <>
+              <li
+                className={`sidebar-item ${isActive(
+                  "/work-hours-details-staff"
+                )}`}
+              >
+                <Link className="sidebar-link" to="/work-hours-details-staff">
+                  <FeatherIcon icon="aperture" className="align-middle" />
+                  <span className="align-middle">Phiếu công nhân viên</span>
+                </Link>
+              </li>
+              <li
+                className={`sidebar-item ${isActive(
+                  "/work-hours-details-by-tt"
+                )}`}
+              >
+                <Link className="sidebar-link" to="/work-hours-details-by-tt">
+                  <FeatherIcon icon="slack" className="align-middle" />
+                  <span className="align-middle">Trạng thái phiếu công</span>
+                </Link>
+              </li>
+            </>
+          )}
+          {/* {isSUPER && (
+            <>
+              <li
+                className={`sidebar-item ${isActive(
+                  "/work-hours-details-staff"
+                )}`}
+              >
+                <Link className="sidebar-link" to="/work-hours-details-staff">
+                  <FeatherIcon icon="aperture" className="align-middle" />
+                  <span className="align-middle">Phiếu công nhân viên</span>
+                </Link>
+              </li>
+              <li
+                className={`sidebar-item ${isActive(
+                  "/work-hours-details-by-tt"
+                )}`}
+              >
+                <Link className="sidebar-link" to="/work-hours-details-by-tt">
+                  <FeatherIcon icon="slack" className="align-middle" />
+                  <span className="align-middle">Trạng thái phiếu công</span>
+                </Link>
+              </li>
+            </>
+          )} */}
           <li className={`sidebar-item ${isActive("/workhour-details")}`}>
             <Link
               className="sidebar-link"
