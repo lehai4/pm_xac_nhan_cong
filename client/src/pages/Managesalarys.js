@@ -6,6 +6,7 @@ import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
 import SalaryComplaintModal from "../components/Model/SalaryComplaintModal";
 import UpdateSalaryComplaintModal from "../components/Model/UpdateSalaryComplaintModal";
+import UpdateStatusModal from "../components/Model/UpdateStatusModal";
 import { toast } from "react-toastify";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
@@ -65,6 +66,7 @@ const Managesalarys = () => {
   const [selectedSalary, setSelectedSalary] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedSalaries, setSelectedSalaries] = useState([]);
+  const [showUpdateStatus, setShowUpdateStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckboxChange = (id) => {
@@ -95,6 +97,48 @@ const Managesalarys = () => {
     setShowUpdateModal(false);
   };
 
+  const handleShowUpdateStatus = (salary) => {
+    setShowUpdateStatus(true);
+    setSelectedSalary(salary);
+  };
+
+  const handleCloseUpdateStatus = () => {
+    setShowUpdateStatus(false);
+    setSelectedSalary(null);
+  };
+
+  const handleUpdateStatus = async (newStatus) => {
+    try {
+      console.log(selectedSalary.id_status);
+      console.log(newStatus);
+      // Gọi API để cập nhật trạng thái
+      const array = [
+        {
+          id: selectedSalary.id_status,
+          tinh_trang: newStatus,
+        },
+      ];
+      await axios.put(
+        `${API_BASE_URL}/statusluong/update/update-multiple`,
+        array
+      );
+
+      // Cập nhật state local
+      setSalarys(
+        salarys.map((s) =>
+          s.id_status === selectedSalary.id_status
+            ? { ...s, tinh_trang: newStatus }
+            : s
+        )
+      );
+
+      toast.success(`Đã ${newStatus.toLowerCase()} yêu cầu`);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Cập nhật trạng thái thất bại");
+    }
+  };
+
   const handleSalaryUpdate = async (status) => {
     if (selectedSalaries.length === 0) {
       toast.warning("Vui lòng chọn ít nhất một bản ghi để cập nhật");
@@ -108,8 +152,6 @@ const Managesalarys = () => {
         ? { tinh_trang: status }
         : { tinh_trang_ns_khieu_nai: status }),
     }));
-
-    // console.log("Updating data:", updatedDataArray);
 
     try {
       const updateStatusResponse = await axios.put(
@@ -502,8 +544,9 @@ const Managesalarys = () => {
                 >
                   <option value="">Tất cả</option>
                   <option value="Đã xác nhận">Đã xác nhận</option>
-                  <option value="Đã gửi lý do chưa xác nhận">
-                    Đã gửi lý do chưa xác nhận
+                  <option value="Cập nhật lý do">Cập nhật lý do</option>
+                  <option value="Đã cập nhật lý do chưa xác nhận">
+                    Đã cập nhật lý do chưa xác nhận
                   </option>
                   <option value="Đang xem">Đang xem</option>
                   <option value="Chưa xác nhận">Chưa xác nhận</option>
@@ -636,8 +679,13 @@ const Managesalarys = () => {
                   <th>Họ tên</th>
                   <th>Bộ phận</th>
                   <th>Trạng thái</th>
-                  {salarys[0].tinh_trang === "Đã gửi lý do chưa xác nhận" && (
-                    <th>Lý do</th>
+                  {salarys[0].tinh_trang ===
+                    "Đã cập nhật lý do chưa xác nhận" && <th>Lý do</th>}
+                  {salarys[0].tinh_trang === "Cập nhật lý do" && (
+                    <>
+                      <th>Lý do</th>
+                      <th>Hoạt động</th>
+                    </>
                   )}
                   {salarys[0].tinh_trang === "Câu hỏi" && (
                     <>
@@ -666,9 +714,24 @@ const Managesalarys = () => {
                         <span> - {salary.tinh_trang_ns_khieu_nai}</span>
                       )}
                     </td>
-                    {salarys[0].tinh_trang === "Đã gửi lý do chưa xác nhận" && (
+                    {salarys[0].tinh_trang ===
+                      "Đã cập nhật lý do chưa xác nhận" && (
                       <td>{salary.ly_do}</td>
                     )}
+                    {salarys[0].tinh_trang === "Cập nhật lý do" && (
+                      <>
+                        <td>{salary.ly_do}</td>
+                        <td className="text-center">
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleShowUpdateStatus(salary)}
+                          >
+                            Duyệt
+                          </button>
+                        </td>
+                      </>
+                    )}
+
                     {salarys[0].tinh_trang === "Câu hỏi" && (
                       <>
                         <td>{salary.noi_dung_kn}</td>
@@ -704,6 +767,12 @@ const Managesalarys = () => {
         handleClose={handleCloseUpdateModal}
         onUpdate={handleSalaryUpdate}
         isBulkUpdate={selectedSalaries.length > 1}
+      />
+      <UpdateStatusModal
+        show={showUpdateStatus}
+        handleClose={handleCloseUpdateStatus}
+        handleUpdate={handleUpdateStatus}
+        salaryData={selectedSalary}
       />
     </div>
   );

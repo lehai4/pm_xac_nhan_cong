@@ -34,6 +34,7 @@ const dotCongRoutes = require("./routers/router_dot_cong.js");
 const statausRoutes = require("./routers/router_status_luong.js");
 const statusCongRoutes = require("./routers/router_status_cong.js");
 const salaryRoutes = require("./routers/router_searchSalary.js");
+const congRoutes = require("./routers/router_searchCong.js");
 const dashboardRoutes = require("./routers/router_dashboard.js");
 
 // Sử dụng routes
@@ -50,6 +51,7 @@ app.use("/api/dotluong", dotLuongRoutes);
 app.use("/api/statusluong", statausRoutes);
 app.use("/api/statusCong", statusCongRoutes);
 app.use("/api/salarys", salaryRoutes);
+app.use("/api/congs", congRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/dotcong", dotCongRoutes);
 // Thiết lập Socket.IO

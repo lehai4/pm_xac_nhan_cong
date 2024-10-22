@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { API_BASE_URL } from "../../config/api";
-import DatePicker from "react-datepicker";
-import moment from "moment";
-import "react-datepicker/dist/react-datepicker.css";
-import SalaryComplaintModal from "../../components/Model/SalaryComplaintModal";
-import UpdateSalaryComplaintModal from "../../components/Model/UpdateSalaryComplaintModal";
-import { toast } from "react-toastify";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
+import moment from "moment";
+import React, { useEffect, useState } from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { toast } from "react-toastify";
+import CongComplaintModal from "../../components/Model/CongComplaintModal";
+import UpdateCongComplaintModal from "../../components/Model/UpdateCongComplaintModal";
+import { API_BASE_URL } from "../../config/api";
+import { useCallback } from "react";
+import UpdateStatusModal from "../../components/Model/UpdateStatusModal";
 
 const ManagerWorkHoursStatus = () => {
   const [dotCongs, setDotCongs] = useState([]);
   const [dotCong, setDotCong] = useState([]);
   const [loaiPhieu, setLoaiPhieu] = useState([]);
   const [phongban, setPhongban] = useState([]);
+  const [dateInput, setDateInput] = useState(null);
   const [search, setSearch] = useState({
     month: new Date(new Date().setMonth(new Date().getMonth())),
     periodName: "",
@@ -65,6 +68,7 @@ const ManagerWorkHoursStatus = () => {
   const [selectedDotCong, setSelectedDotCong] = useState(null);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedDotCongs, setSelectedDotCongs] = useState([]);
+  const [showUpdateStatus, setShowUpdateStatus] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleCheckboxChange = (id) => {
@@ -81,8 +85,8 @@ const ManagerWorkHoursStatus = () => {
     setShowUpdateModal(true);
   };
 
-  const handleViewSalary = (salary) => {
-    setSelectedDotCong(salary);
+  const handleViewCong = (cong) => {
+    setSelectedDotCong(cong);
     setShowModal(true);
   };
 
@@ -95,7 +99,49 @@ const ManagerWorkHoursStatus = () => {
     setShowUpdateModal(false);
   };
 
-  const handleSalaryUpdate = async (status) => {
+  const handleShowUpdateStatus = (cong) => {
+    setShowUpdateStatus(true);
+    setSelectedDotCong(cong);
+  };
+
+  const handleCloseUpdateStatus = () => {
+    setShowUpdateStatus(false);
+    setSelectedDotCong(null);
+  };
+
+  const handleUpdateStatus = async (newStatus) => {
+    try {
+      console.log(selectedDotCong.id_status);
+      console.log(newStatus);
+      // Gọi API để cập nhật trạng thái
+      const array = [
+        {
+          id: selectedDotCong.id_status,
+          tinh_trang: newStatus,
+        },
+      ];
+      await axios.put(
+        `${API_BASE_URL}/statusCong/update/update-multiple`,
+        array
+      );
+
+      // Cập nhật state local
+      setDotCongs(
+        dotCongs.map((s) =>
+          s.id_status === selectedDotCong.id_status
+            ? { ...s, tinh_trang: newStatus }
+            : s
+        )
+      );
+
+      toast.success(`Đã ${newStatus.toLowerCase()} yêu cầu`);
+    } catch (error) {
+      console.error("Error updating status:", error);
+      toast.error("Cập nhật trạng thái thất bại");
+    }
+  };
+
+  const handleCongUpdate = async (status) => {
     if (selectedDotCongs.length === 0) {
       toast.warning("Vui lòng chọn ít nhất một bản ghi để cập nhật");
       return;
@@ -113,7 +159,7 @@ const ManagerWorkHoursStatus = () => {
 
     try {
       const updateStatusResponse = await axios.put(
-        `${API_BASE_URL}/statusluong/update/update-multiple`,
+        `${API_BASE_URL}/statusCong/update/update-multiple`,
         updatedDataArray
       );
 
@@ -146,7 +192,7 @@ const ManagerWorkHoursStatus = () => {
     }
   };
 
-  // Lấy dữ liệu đợt lương
+  // Lấy dữ liệu đợt công
   const DotCong = async () => {
     if (search.month) {
       try {
@@ -181,16 +227,21 @@ const ManagerWorkHoursStatus = () => {
       if (!search.employeeId) queryParams.delete("maNV");
       if (!search.status) queryParams.delete("status");
       if (!search.phongban) queryParams.delete("phongban");
-      const endpoint =
-        loaiPhieu.loai_phieu === "2"
-          ? "/complaint-details-cn"
-          : "/complaint-details-ct";
 
+      const endpoint =
+        loaiPhieu.loai_phieu === "1"
+          ? "/complaint-details-hst"
+          : loaiPhieu.loai_phieu === "3"
+          ? "/complaint-details-main"
+          : loaiPhieu.loai_phieu === "2"
+          ? "/complaint-details-gcgc"
+          : "";
+      // console.log("Endpoint: " + endpoint);
       const response = await axios.get(
-        `${API_BASE_URL}/dotCong${endpoint}?${queryParams}`
+        `${API_BASE_URL}/congs${endpoint}?${queryParams}`
       );
 
-      console.log(response.data);
+      // console.log(response.data);
 
       if (response.data && response.data.length > 0) {
         // Sắp xếp dữ liệu
@@ -213,7 +264,6 @@ const ManagerWorkHoursStatus = () => {
             return aMaNV.localeCompare(bMaNV, "vi");
           }
         });
-
         setDotCongs(sortedData);
       } else {
         setDotCongs([]);
@@ -433,9 +483,14 @@ const ManagerWorkHoursStatus = () => {
     }
   };
 
+  useEffect(() => {
+    const filtered = dotCong.find(
+      (dot) => dot.id === parseInt(search.periodName)
+    );
+    setDateInput(filtered && filtered.bang_cong_t);
+  }, [search.periodName]);
   return (
     <div className="tab-pane fade show active" role="tabpanel">
-      hihi
       <div className="container-fluid py-3">
         <h4 className="text-center mb-4 text-primary h2 fw-bold">
           QUẢN LÝ TRẠNG THÁI
@@ -503,8 +558,9 @@ const ManagerWorkHoursStatus = () => {
                 >
                   <option value="">Tất cả</option>
                   <option value="Đã xác nhận">Đã xác nhận</option>
-                  <option value="Đã gửi lý do chưa xác nhận">
-                    Đã gửi lý do chưa xác nhận
+                  <option value="Cập nhật lý do">Cập nhật lý do</option>
+                  <option value="Đã cập nhật lý do chưa xác nhận">
+                    Đã cập nhật lý do chưa xác nhận
                   </option>
                   <option value="Đang xem">Đang xem</option>
                   <option value="Chưa xác nhận">Chưa xác nhận</option>
@@ -637,8 +693,13 @@ const ManagerWorkHoursStatus = () => {
                   <th>Họ tên</th>
                   <th>Bộ phận</th>
                   <th>Trạng thái</th>
-                  {dotCongs[0].tinh_trang === "Đã gửi lý do chưa xác nhận" && (
-                    <th>Lý do</th>
+                  {dotCongs[0].tinh_trang ===
+                    "Đã cập nhật lý do chưa xác nhận" && <th>Lý do</th>}
+                  {dotCongs[0].tinh_trang === "Cập nhật lý do" && (
+                    <>
+                      <th>Lý do</th>
+                      <th>Hoạt động</th>
+                    </>
                   )}
                   {dotCongs[0].tinh_trang === "Câu hỏi" && (
                     <>
@@ -649,33 +710,52 @@ const ManagerWorkHoursStatus = () => {
                 </tr>
               </thead>
               <tbody>
-                {dotCongs.map((salary, index) => (
+                {dotCongs.map((cong, index) => (
                   <tr key={index}>
                     <td>
                       <input
                         type="checkbox"
-                        checked={selectedDotCongs.includes(salary.id_status)}
-                        onChange={() => handleCheckboxChange(salary.id_status)}
+                        checked={selectedDotCongs.includes(cong.id_status)}
+                        onChange={() => handleCheckboxChange(cong.id_status)}
                       />
                     </td>
-                    <td>{salary.ma_nv}</td>
-                    <td>{salary.ho_ten}</td>
-                    <td>{salary.ten_bo_phan}</td>
+                    <td>{cong.ma_nv}</td>
                     <td>
-                      {salary.tinh_trang}
-                      {salary.tinh_trang_ns_khieu_nai && (
-                        <span> - {salary.tinh_trang_ns_khieu_nai}</span>
+                      {cong.ho} {cong.ten}
+                    </td>
+                    <td>{cong.ten_bo_phan}</td>
+                    <td>
+                      {cong.tinh_trang}
+                      {cong.tinh_trang_ns_khieu_nai && (
+                        <span> - {cong.tinh_trang_ns_khieu_nai}</span>
                       )}
                     </td>
                     {dotCongs[0].tinh_trang ===
-                      "Đã gửi lý do chưa xác nhận" && <td>{salary.ly_do}</td>}
-                    {dotCongs[0].tinh_trang === "Câu hỏi" && (
+                      "Đã cập nhật lý do chưa xác nhận" && (
+                      <td>{cong.ly_do}</td>
+                    )}
+
+                    {dotCongs[0].tinh_trang === "Cập nhật lý do" && (
                       <>
-                        <td>{salary.noi_dung_kn}</td>
+                        <td>{cong.ly_do}</td>
                         <td className="text-center">
                           <button
                             className="btn btn-primary"
-                            onClick={() => handleViewSalary(salary)}
+                            onClick={() => handleShowUpdateStatus(cong)}
+                          >
+                            Duyệt
+                          </button>
+                        </td>
+                      </>
+                    )}
+
+                    {dotCongs[0].tinh_trang === "Câu hỏi" && (
+                      <>
+                        <td>{cong.noi_dung_kn}</td>
+                        <td className="text-center">
+                          <button
+                            className="btn btn-primary"
+                            onClick={() => handleViewCong(cong)}
                           >
                             Xem
                           </button>
@@ -693,18 +773,25 @@ const ManagerWorkHoursStatus = () => {
           </div>
         )}
       </div>
-      {/* <SalaryComplaintModal
+      <CongComplaintModal
         loaiPhieu={loaiPhieu.loai_phieu}
         show={showModal}
+        dateInput={dateInput}
         handleClose={handleCloseModal}
-        salaryData={selectedDotCong}
+        congData={selectedDotCong}
       />
-      <UpdateSalaryComplaintModal
+      <UpdateCongComplaintModal
         show={showUpdateModal}
         handleClose={handleCloseUpdateModal}
-        onUpdate={handleSalaryUpdate}
+        onUpdate={handleCongUpdate}
         isBulkUpdate={selectedDotCongs.length > 1}
-      /> */}
+      />
+      <UpdateStatusModal
+        show={showUpdateStatus}
+        handleClose={handleCloseUpdateStatus}
+        handleUpdate={handleUpdateStatus}
+        salaryData={selectedDotCong}
+      />
     </div>
   );
 };

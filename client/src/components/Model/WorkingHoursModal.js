@@ -189,6 +189,38 @@ export const AttendanceMain = ({ data }) => {
   );
 };
 
+export const AttendanceGCGC = ({ data }) => (
+  <div className="overflow-y-scroll" style={{ height: 300 }}>
+    <table className="table table-striped h-100">
+      <tbody>
+        <tr>
+          <td>Hành chính + Ca1 + Ca2:</td>
+          <td className="text-end">{formatNumber(data.hanh_Chinh_Ca)}</td>
+        </tr>
+        <tr>
+          <td>Ca3:</td>
+          <td className="text-end">{formatNumber(data.ca3)}</td>
+        </tr>
+        <tr>
+          <td>Ngày thường:</td>
+          <td className="text-end">{formatNumber(data.ngay_Thuong)}</td>
+        </tr>
+        <tr>
+          <td>Ngày nghỉ hàng tuần:</td>
+          <td className="text-end">{formatNumber(data.ngay_Nghi_Hang_Tuan)}</td>
+        </tr>
+        <tr>
+          <td>Ngày lễ:</td>
+          <td className="text-end">{formatNumber(data.ngay_Le)}</td>
+        </tr>
+        <tr>
+          <td>Phép:</td>
+          <td className="text-end">{formatNumber(data.phep)}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+);
 const WorkingHoursModal = (props) => {
   const { onClose, employee, currentView, setCurrentView } = props;
 
@@ -645,7 +677,7 @@ const WorkingHoursModal = (props) => {
                       <strong>Số thẻ:</strong> LH{gio_cong_gian_ca[0].so_the}
                     </p>
                     <h5 className="mt-4">Chi tiết công</h5>
-                    {/* dạng đứng */}
+                    {/* dạng ngang */}
                     {/* <div className="overflow-x-scroll">
                       <table className="border border-collapse">
                         <thead>
@@ -696,51 +728,8 @@ const WorkingHoursModal = (props) => {
                         </tbody>
                       </table>
                     </div> */}
-                    {/* dọc */}
-                    <div className="overflow-y-scroll" style={{ height: 300 }}>
-                      <table className="table table-striped h-100">
-                        <tbody>
-                          <tr>
-                            <td>Hành chính + Ca1 + Ca2:</td>
-                            <td className="text-end">
-                              {formatNumber(gio_cong_gian_ca[0].hanh_Chinh_Ca)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Ca3:</td>
-                            <td className="text-end">
-                              {formatNumber(gio_cong_gian_ca[0].ca3)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Ngày thường:</td>
-                            <td className="text-end">
-                              {formatNumber(gio_cong_gian_ca[0].ngay_Thuong)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Ngày nghỉ hàng tuần:</td>
-                            <td className="text-end">
-                              {formatNumber(
-                                gio_cong_gian_ca[0].ngay_Nghi_Hang_Tuan
-                              )}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Ngày lễ:</td>
-                            <td className="text-end">
-                              {formatNumber(gio_cong_gian_ca[0].ngay_Le)}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td>Phép:</td>
-                            <td className="text-end">
-                              {formatNumber(gio_cong_gian_ca[0].phep)}
-                            </td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                    {/* đứng */}
+                    <AttendanceGCGC data={gio_cong_gian_ca[0]} />
                   </div>
                 </div>
               </div>

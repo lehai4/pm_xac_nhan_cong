@@ -4,14 +4,14 @@ const db = require("../config/db");
 const PhongBan = {
   getAllPhongBans: async () => {
     const [rows] = await db.query(
-      "SELECT pbnew.* FROM pm_phong_ban_quan_ly_new pb LEFT JOIN sync_data_hi_time_sheet.sync_phong_ban pbnew ON pbnew.id = pb.id_phong_ban"
+      "SELECT DISTINCT  pbnew.* FROM pm_phong_ban_quan_ly_new pb LEFT JOIN sync_data_hi_time_sheet.sync_phong_ban pbnew ON pbnew.id = pb.id_phong_ban"
     );
     return rows;
   },
 
   getAllPhongBansByPhuTrach: async (phu_trach) => {
     const [rows] = await db.query(
-      `SELECT pbnew.* FROM pm_phong_ban_quan_ly_new pb
+      `SELECT DISTINCT pbnew.* FROM pm_phong_ban_quan_ly_new pb
       LEFT JOIN sync_data_hi_time_sheet.sync_phong_ban pbnew ON pbnew.id = pb.id_phong_ban
       LEFT JOIN sync_data_hi_time_sheet.sync_bo_phan bp_new
       ON bp_new.id_phong_ban = pb.id

@@ -4,8 +4,8 @@ const moment = require("moment");
 exports.getPhanQuyenWorkHours = async (req, res) => {
   try {
     const [phanQuyenDotCong] = await db.query(`
-        SELECT pb.*
-        FROM pm_phong_ban_quan_ly pb
+        SELECT DISTINCT pb.*, spb.ten_phong_ban
+        FROM pm_phong_ban_quan_ly_new pb
         LEFT JOIN pm_cong_phong_ban_disable pbd ON pb.id = pbd.id_phong_ban
         LEFT JOIN sync_data_hi_time_sheet.sync_phong_ban spb ON pb.id_phong_ban = spb.id
       `);

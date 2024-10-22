@@ -433,8 +433,9 @@ const StatusCong = {
     const updateFields = [];
     const updateValues = [];
     const possibleFields = [
-      "id_trong",
-      "id_ngoai",
+      "id_he_so_thuong",
+      "id_gio_cong_gian_ca",
+      "id_cong_main",
       "id_dot",
       "time_con_lai",
       "tinh_trang",

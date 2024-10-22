@@ -353,29 +353,18 @@ const WorkHourDetails = () => {
 
   const inFormOrLink = true; // Replace this with your actual logic
 
-  // cần checked
   // Thoát trang
   useEffect(() => {
     console.log("pausedTimes", +1);
     const handleBeforeUnload = async (event) => {
       updateRemainingTime(); // Cập nhật thời gian còn lại ngay trước khi unload
 
-      console.log("runingNgoai...");
-
       if (showDetails && !showSuccessMessage && inFormOrLink) {
         event.preventDefault();
         event.returnValue = "Do you really want to close?"; // For modern browsers
 
-        console.log("runingTRong...");
         const isMain = Boolean(mainWorkHours);
-        const isHST = Boolean(HST);
-        const isGCGC = Boolean(GCGC);
 
-        const isCheck = isMain
-          ? mainWorkHours.id
-          : !showGCGC
-          ? HST.id
-          : GCGC.id;
         const idDot = isMain
           ? mainWorkHours.id_dot_cong
           : !showGCGC
@@ -449,7 +438,7 @@ const WorkHourDetails = () => {
   const [hiddenCountdown, setHiddenCountdown] = useState(null);
   const hiddenIntervalRef = useRef(null);
 
-  //mai kiểm tra lại
+  //đang bị lỗi
   const checkTimeRemaining = async (countdown) => {
     const [hours, minutes, seconds] = countdown.split(":").map(Number);
     let totalSeconds = hours * 3600 + minutes * 60 + seconds;
@@ -462,20 +451,21 @@ const WorkHourDetails = () => {
 
     try {
       const isMain = Boolean(mainWorkHours);
-
       const idHSTGCGCMain = isMain
         ? mainWorkHours.id
         : !showGCGC
         ? HST?.id
         : GCGC?.id;
+
       const idDot = isMain
         ? mainWorkHours.id_dot_cong
         : !showGCGC
         ? HST.id_dot_cong
         : GCGC.id_dot_cong;
 
+      console.log("mainWorkHours", mainWorkHours);
       console.log("idHSTGCGCMain", idHSTGCGCMain);
-      console.log("isMain", isMain);
+      console.log("idDot", idDot);
       const timeGiaHan = await axios.get(
         `${API_BASE_URL}/statusCong/check-extension/${idHSTGCGCMain}/${idDot}`
       );
@@ -508,6 +498,7 @@ const WorkHourDetails = () => {
     }
   };
 
+  // đang bị lỗi
   const handleGiaHan = async () => {
     setShowGiaHan(false);
     setShowTimeWarning(false);
@@ -518,20 +509,23 @@ const WorkHourDetails = () => {
       return totalSeconds + 180; // Thêm 180 giây (3 phút)
     };
 
+    const isMain = Boolean(mainWorkHours);
+    const idHSTGCGCMain = isMain
+      ? mainWorkHours.id
+      : !showGCGC
+      ? HST?.id
+      : GCGC?.id;
+
+    const idDot = isMain
+      ? mainWorkHours.id_dot_cong
+      : !showGCGC
+      ? HST.id_dot_cong
+      : GCGC.id_dot_cong;
+
     try {
-      const isMain = Boolean(mainWorkHours);
-
-      const idHSTGCGCMain = isMain
-        ? mainWorkHours.id
-        : !showGCGC
-        ? HST?.id
-        : GCGC?.id;
-      const idDot = isMain
-        ? mainWorkHours.id_dot_cong
-        : !showGCGC
-        ? HST.id_dot_cong
-        : GCGC.id_dot_cong;
-
+      console.log("mainWorkHours", mainWorkHours);
+      console.log("idHSTGCGCMain", idHSTGCGCMain);
+      console.log("idDot", idDot);
       await axios.put(
         `${API_BASE_URL}/statuscong/update-status-cong-xin-gia-han/${idHSTGCGCMain}/${idDot}`,
         {
@@ -539,12 +533,14 @@ const WorkHourDetails = () => {
         }
       );
 
-      const currentTime = isMain
+      const currentMax = isMain
         ? countdownMain
-        : showGCGC
-        ? countdownGCGC
-        : countdownHST;
-      const extendedTime = addTwoMinutes(currentTime);
+        : !showGCGC
+        ? countdownHST
+        : countdownGCGC;
+
+      console.log("currentMax", currentMax);
+      const extendedTime = addTwoMinutes(currentMax);
       console.log("Thời gian gia hạn (giây):", extendedTime);
       setHiddenCountdown(extendedTime);
 
@@ -608,7 +604,6 @@ const WorkHourDetails = () => {
     const isMain = Boolean(mainWorkHours);
     console.log("isMain", isMain);
     if (isRunning) {
-      // console.log("running...");
       const currentTime = isMain
         ? countdownMain
         : !showGCGC
@@ -708,6 +703,7 @@ const WorkHourDetails = () => {
     }, 1000);
   };
 
+  // bị lỗi
   const handleTimeUp = async (isNgoai) => {
     clearInterval(intervalRef.current);
     clearInterval(warningIntervalRef.current);
@@ -1769,9 +1765,9 @@ const WorkHourDetails = () => {
   //   console.log("GCGC", GCGC);
   // }, [GCGC]);
 
-  // useEffect(() => {
-  //   console.log("mainWorkHours", mainWorkHours);
-  // }, [mainWorkHours]);
+  useEffect(() => {
+    console.log("mainWorkHours", mainWorkHours);
+  }, [mainWorkHours]);
 
   if (loading) return <div className="container mt-4">Loading...</div>;
   if (error)
