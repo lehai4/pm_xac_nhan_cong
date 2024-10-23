@@ -8,7 +8,8 @@ function setupSocket(io) {
   io.on("connection", (socket) => {
     socket.on("login", async (data) => {
       const { MaNV, MatKhau } = data;
-
+      console.log("MaNV: ", MaNV);
+      console.log("MatKhau: ", MatKhau);
       try {
         const [rows] = await connection.query(
           `SELECT 
@@ -59,9 +60,7 @@ function setupSocket(io) {
 
         // Xác định vai trò
         const role =
-          user.id_chuc_danh === 2 || user.id_chuc_danh === 1
-            ? "admin"
-            : "user";
+          user.id_chuc_danh === 2 || user.id_chuc_danh === 1 ? "admin" : "user";
         const roleAll = user.id_phong_ban_phu_trach
           ? "QL"
           : user.id_bo_phan_phu_trach

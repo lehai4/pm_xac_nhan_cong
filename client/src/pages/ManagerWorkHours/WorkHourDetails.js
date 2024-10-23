@@ -177,7 +177,8 @@ const WorkHourDetails = () => {
         isCheck = "GCGC";
         currentDotCong = GCGC;
       }
-
+      console.log("isCheck", isCheck);
+      console.log("currentDotCong", currentDotCong);
       if (!currentDotCong) {
         console.error("Không tìm thấy dữ liệu công");
         alert("Có lỗi xảy ra khi xác nhận. Vui lòng thử lại.");
@@ -198,18 +199,22 @@ const WorkHourDetails = () => {
         await axios.post(`${API_BASE_URL}/statusCong`, [statusLuong]);
         setShowConfirmation(false);
 
-        if (isCheck === "Main" && mainWorkHours) {
+        if (isCheck === "Main" && mainWorkHours && HST) {
           console.log("isCheckedMain...");
           setMainWorkHours(null);
           setShowGCGC(false);
           setIsRunning(true);
+          clearInterval(hiddenIntervalRef.current);
+          clearInterval(warningIntervalRef.current);
           startTimerHST();
-        } else if (isCheck === "HST" && HST) {
+        } else if (isCheck === "HST" && GCGC) {
           console.log("isCheckedHST...");
           setMainWorkHours(null);
           setHST(null);
           setShowGCGC(true);
           setIsRunning(true);
+          clearInterval(hiddenIntervalRef.current);
+          clearInterval(warningIntervalRef.current);
           startTimerGCGC();
         } else {
           setShowSuccessMessage(true);
@@ -463,9 +468,10 @@ const WorkHourDetails = () => {
         ? HST.id_dot_cong
         : GCGC.id_dot_cong;
 
-      console.log("mainWorkHours", mainWorkHours);
-      console.log("idHSTGCGCMain", idHSTGCGCMain);
-      console.log("idDot", idDot);
+      // console.log("mainWorkHours", mainWorkHours);
+      // console.log("idHSTGCGCMain", idHSTGCGCMain);
+      // console.log("idDot", idDot);
+
       const timeGiaHan = await axios.get(
         `${API_BASE_URL}/statusCong/check-extension/${idHSTGCGCMain}/${idDot}`
       );
@@ -563,6 +569,7 @@ const WorkHourDetails = () => {
           return prevCountdown - 1;
         } else {
           clearInterval(hiddenIntervalRef.current);
+          clearInterval(warningIntervalRef.current);
           console.log("Kết thúc đếm ngược ẩn, chuyển sang 30 giây cuối");
           const newTime = "00:00:30";
           setHiddenCountdown(null);
@@ -602,8 +609,8 @@ const WorkHourDetails = () => {
   // cần xem lun
   const updateRemainingTime = useCallback(() => {
     const isMain = Boolean(mainWorkHours);
-    console.log("isMain", isMain);
     if (isRunning) {
+      console.log("isMain mainWorkHours", isMain);
       const currentTime = isMain
         ? countdownMain
         : !showGCGC
@@ -645,6 +652,7 @@ const WorkHourDetails = () => {
             totalSeconds--;
             const newCountdown = formatTime(totalSeconds);
             checkTimeRemaining(newCountdown);
+            console.log("newCountdownMain", newCountdown);
             return newCountdown;
           } else {
             handleTimeUp(false);
@@ -670,6 +678,7 @@ const WorkHourDetails = () => {
           totalSeconds--;
           const newCountdown = formatTime(totalSeconds);
           checkTimeRemaining(newCountdown);
+          console.log("newCountdownHST", newCountdown);
           return newCountdown;
         } else {
           handleTimeUp(false);
@@ -694,6 +703,8 @@ const WorkHourDetails = () => {
           totalSeconds--;
           const newCountdown = formatTime(totalSeconds);
           checkTimeRemaining(newCountdown);
+          console.log("newCountdownGCGC", newCountdown);
+
           return newCountdown;
         } else {
           handleTimeUp(true);

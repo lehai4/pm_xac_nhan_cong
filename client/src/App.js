@@ -27,6 +27,7 @@ import {
   SupperEachWorkHours,
   UploadWorkHours,
   WorkHoursStaff,
+  WorkHoursStaffByTT,
 } from "./pages";
 import WorkHourDetails from "./pages/ManagerWorkHours/WorkHourDetails.js";
 import ManagerWorkHoursStatus from "./pages/ManagerWorkHours/ManagerWorkHoursStatus.js";
@@ -121,6 +122,10 @@ function App() {
                   path="work-hours-details-staff"
                   element={<WorkHoursStaff ma_nv={ma_nv} />}
                 />
+                <Route
+                  path="work-hours-details-by-tt"
+                  element={<WorkHoursStaffByTT ma_nv={ma_nv} />}
+                />
                 <Route path="*" element={<Navigate to="/" />} />
               </>
             )}
@@ -158,7 +163,10 @@ function App() {
                   path="work-hours-details-staff"
                   element={<WorkHoursStaff ma_nv={ma_nv} />}
                 />
-                {/* <Route path="work-hours-details-by-tt" element={<SalaryStaffByTT/>}/> */}
+                <Route
+                  path="work-hours-details-by-tt"
+                  element={<WorkHoursStaffByTT ma_nv={ma_nv} />}
+                />
 
                 <Route
                   path="change-password"

@@ -130,7 +130,7 @@ const UploadWorkHours = () => {
         ),
         time_start: getCurrentDateTime(),
         time_end: getTimeFiveMinutesLater(30),
-        time_xem: null,
+        time_xem: formattedTime,
         loai_phieu: "3",
         time_start_ql: getCurrentDateTime(),
         time_end_ql: getTimeFiveMinutesLater(30),
@@ -151,18 +151,21 @@ const UploadWorkHours = () => {
           data
         );
         if (response.status === 201) {
-          const response = await axios.post(
-            `${API_BASE_URL}/dotcong/getall`,
-            dotCong
+          console.log("call api...");
+          await axios.post(
+            `${API_BASE_URL}/dotcong/bang-cong-chinh`,
+            dataAutoImport
           );
-          console.log("response", response.data.length);
-          if (response.data.length === 0) {
-            console.log("runing...");
-            await axios.post(
-              `${API_BASE_URL}/dotcong/bang-cong-chinh`,
-              dataAutoImport
-            );
-          }
+          // const response = await axios.post(
+          //   `${API_BASE_URL}/dotcong/getall`,
+          //   dotCong
+          // );
+          // if (response.data.length === 0) {
+          //   await axios.post(
+          //     `${API_BASE_URL}/dotcong/bang-cong-chinh`,
+          //     dataAutoImport
+          //   );
+          // }
           toast.success("Thêm mới thành công");
         } else {
           console.error("Lỗi phản hồi:", response);
@@ -175,16 +178,21 @@ const UploadWorkHours = () => {
           data
         );
         if (response.status === 201) {
-          const response = await axios.post(
-            `${API_BASE_URL}/dotcong/getall`,
-            dotCong
+          console.log("call api...");
+          await axios.post(
+            `${API_BASE_URL}/dotcong/bang-cong-chinh`,
+            dataAutoImport
           );
-          if (response.data.length === 0) {
-            await axios.post(
-              `${API_BASE_URL}/dotcong/bang-cong-chinh`,
-              dataAutoImport
-            );
-          }
+          // const response = await axios.post(
+          //   `${API_BASE_URL}/dotcong/getall`,
+          //   dotCong
+          // );
+          // if (response.data.length === 0) {
+          //   await axios.post(
+          //     `${API_BASE_URL}/dotcong/bang-cong-chinh`,
+          //     dataAutoImport
+          //   );
+          // }
           toast.success("Thêm mới thành công");
         } else {
           console.error("Lỗi phản hồi:", response);
@@ -197,6 +205,16 @@ const UploadWorkHours = () => {
       if (loadingTime < 2000) {
         await new Promise((resolve) => setTimeout(resolve, 2000 - loadingTime));
       }
+      setNewDataWorkHours({
+        month: new Date(),
+        periodName: "",
+        viewRange: [new Date(), new Date()],
+        viewRangeQL: [new Date(), new Date()],
+        templateName: "",
+        maxViewTime: 0,
+        convertData: [],
+        PhanQuyenWorkHours: [],
+      });
       console.log("newDataWorkHours", newDataWorkHours);
     } catch (error) {
       if (error.response) {
@@ -659,7 +677,7 @@ const UploadWorkHours = () => {
         (isCongByIdDotGCGC.length > 0 || isCongByIdDotHST.length > 0) &&
         isDotCong.loai_phieu !== "3"
       ) {
-        console.log("có chạy vô đây hong...");
+        // console.log("có chạy vô đây hong...");
         let dataToUpdate;
         if (updateWorkHours.templateName === "1") {
           dataToUpdate = isCongByIdDotHST;
@@ -704,7 +722,8 @@ const UploadWorkHours = () => {
         });
         toast.success("Cập nhật dữ liệu đợt công và chi tiết thành công!");
       } else {
-        toast.success("Cập nhật thông tin đợt công thành công!");
+        toast.success("Cập nhật thông tin đợt công thành công.");
+        toast.warning(" Bạn không được phép cập nhật bảng công chính!");
       }
     } catch (error) {
       console.error("Lỗi khi cập nhật dữ liệu vào CSDL:", error);
@@ -1247,26 +1266,31 @@ const UploadWorkHours = () => {
                     </div>
                   </div>
 
-                  <div className="col-sm-6 col-lg-4">
-                    <div className="mb-3 position-relative">
-                      <label
-                        htmlFor="update-file-work-hours"
-                        className="form-label"
-                      >
-                        File CSV công
-                      </label>
-                      <input
-                        className="form-control"
-                        type="file"
-                        id="update-file-work-hours"
-                        onChange={handleFileUpload}
-                        accept=".csv"
-                      />
-                      <div className="invalid-tooltip">
-                        Vui lòng chọn file csv
+                  {updateWorkHours.periodName === "1" ||
+                  updateWorkHours.periodName === "3" ? (
+                    <div className="col-sm-6 col-lg-4">
+                      <div className="mb-3 position-relative">
+                        <label
+                          htmlFor="update-file-work-hours"
+                          className="form-label"
+                        >
+                          File CSV công
+                        </label>
+                        <input
+                          className="form-control"
+                          type="file"
+                          id="update-file-work-hours"
+                          onChange={handleFileUpload}
+                          accept=".csv"
+                        />
+                        <div className="invalid-tooltip">
+                          Vui lòng chọn file csv
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  ) : (
+                    <></>
+                  )}
                 </div>
                 <PhongbanPhanquyenWorkHours
                   onSubmit={handlePhongbanData}

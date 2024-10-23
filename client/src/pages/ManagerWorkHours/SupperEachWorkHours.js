@@ -118,7 +118,7 @@ const SupperEachWorkHours = () => {
               <td data-label="Loại đợt lương">
                 {dot.loai_phieu === "1"
                   ? "Hệ số thưởng"
-                  : dot.loai_phieu == 2
+                  : dot.loai_phieu === "2"
                   ? "Giờ công giãn ca"
                   : "Công chính"}
               </td>

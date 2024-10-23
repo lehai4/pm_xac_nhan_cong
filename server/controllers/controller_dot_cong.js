@@ -30,7 +30,6 @@ const dotCongController = {
       if (isNaN(numericId)) {
         return res.status(400).json({ error: "Invalid ID format" });
       }
-
       // Gọi phương thức model để lấy dữ liệu
       const DotCongData = await DotCong.getDotCongById(numericId);
 

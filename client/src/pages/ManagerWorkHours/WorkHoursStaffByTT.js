@@ -1,21 +1,22 @@
 import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
-import { API_BASE_URL } from "../config/api";
+import { API_BASE_URL } from "../../config/api";
 import DatePicker from "react-datepicker";
 import moment from "moment";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import "react-datepicker/dist/react-datepicker.css";
 import { Modal, Button, Form } from "react-bootstrap";
 import { toast } from "react-toastify";
 
-const SalaryStaffByTT = (ma_nv) => {
+const WorHoursStaffByTT = (ma_nv) => {
   const { isQL, isTT } = useAuth();
-  const [salarys, setSalarys] = useState([]);
-  const [dotLuong, setDotLuong] = useState([]);
+  const [congs, setCongs] = useState([]);
+  const [dotCong, setDotCong] = useState([]);
   const [loaiPhieu, setLoaiPhieu] = useState([]);
   const [PhongBanArray, setPhongBanArray] = useState([]);
   const [search, setSearch] = useState({
-    month: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+    month: new Date(new Date().setMonth(new Date().getMonth())),
+    // month: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     periodName: "",
     employeeId: "",
     status: "Câu hỏi",
@@ -34,7 +35,7 @@ const SalaryStaffByTT = (ma_nv) => {
   ]);
 
   const fetchData = async () => {
-    await DotLuong();
+    await DotCong();
     await LoaiPhieu();
     await fetchNhanVien();
 
@@ -66,7 +67,7 @@ const SalaryStaffByTT = (ma_nv) => {
 
   const LoaiPhieu = async () => {
     const response = await axios.get(
-      `${API_BASE_URL}/dotluong/${search.periodName}`
+      `${API_BASE_URL}/dotcong/${search.periodName}`
     );
     setLoaiPhieu(response.data);
   };
@@ -76,23 +77,24 @@ const SalaryStaffByTT = (ma_nv) => {
   const [totalPages, setTotalPages] = useState(0);
   const [totalItems, setTotalItems] = useState(0);
 
-  // Lấy dữ liệu đợt lương
-  const DotLuong = async () => {
+  // Lấy dữ liệu đợt cong
+  const DotCong = async () => {
     if (search.month) {
       try {
         const formattedMonth = moment(search.month).format("MM-YYYY");
         const response = await axios.get(
-          `${API_BASE_URL}/dotluong/month/${formattedMonth}`
+          `${API_BASE_URL}/dotcong/month/${formattedMonth}`
         );
-        setDotLuong(response.data);
+        setDotCong(response.data);
       } catch (error) {
-        console.error("Lỗi khi lấy dữ liệu đợt lương:", error);
-        setDotLuong([]);
+        console.error("Lỗi khi lấy dữ liệu đợt công:", error);
+        setDotCong([]);
       }
     } else {
-      setDotLuong([]);
+      setDotCong([]);
     }
   };
+
   const fetchNhanVien = useCallback(
     async (page = 1, applyFilters = false) => {
       try {
@@ -122,20 +124,21 @@ const SalaryStaffByTT = (ma_nv) => {
         console.log("params:", params);
         // Gọi API mới để lấy danh sách nhân viên
         const response = await axios.get(
-          `${API_BASE_URL}/salarys/salary-status/ttandql`,
+          `${API_BASE_URL}/congs/cong-status/ttandql`,
           {
             params,
           }
         );
+        console.log("response", response);
         const { data, pagination } = response.data;
         // Cập nhật trạng thái
-        setSalarys(data);
+        setCongs(data);
         setCurrentPage(pagination.page);
         setTotalPages(pagination.totalPages);
         setTotalItems(pagination.total);
       } catch (error) {
         console.error("Error fetching employee data:", error);
-        setSalarys([]);
+        setCongs([]);
         setTotalPages(0);
         setTotalItems(0);
       }
@@ -164,6 +167,9 @@ const SalaryStaffByTT = (ma_nv) => {
     fetchNhanVien(page);
   };
 
+  useEffect(() => {
+    console.log("Phiếu", loaiPhieu.loai_phieu);
+  }, [loaiPhieu]);
   // Nhập lý do
   const [showModal, setShowModal] = useState(false);
   const [reason, setReason] = useState({
@@ -171,17 +177,33 @@ const SalaryStaffByTT = (ma_nv) => {
     ly_do: "",
     nguoi_nhap: "",
   });
-  const [currentSalaryId, setCurrentSalaryId] = useState({
-    id_trong: null,
-    id_ngoai: null,
+  const [currentCongId, setCurrentCongId] = useState({
+    id_he_so_thuong: null,
+    id_gio_cong_gian_ca: null,
+    id_cong_main: null,
     id_dot: null,
   }); // ID của nhân viên hiện tại
   const [isSubmitted, setIsSubmitted] = useState(false); // Thay đổi để theo dõi trạng thái gửi cho từng nhân viên
 
-  const handleShow = (id_dot, id_trong, id_ngoai) => {
-    setCurrentSalaryId({ id_trong, id_ngoai, id_dot }); // Cập nhật ID của nhân viên hiện tại
+  const handleShow = (idCongDot, id_bangcong_nhanvien) => {
+    console.log("idCongDot", idCongDot);
+    console.log("id_bangcong_nhanvien", id_bangcong_nhanvien);
+
+    setCurrentCongId({
+      id_he_so_thuong:
+        loaiPhieu.loai_phieu === "1" ? id_bangcong_nhanvien : null,
+      id_gio_cong_gian_ca:
+        loaiPhieu.loai_phieu === "2" ? id_bangcong_nhanvien : null,
+      id_cong_main: loaiPhieu.loai_phieu === "3" ? id_bangcong_nhanvien : null,
+      id_dot: idCongDot,
+    }); // Cập nhật ID của nhân viên hiện tại
     setShowModal(true);
   };
+
+  useEffect(() => {
+    console.log("currentCongId", currentCongId);
+  }, [currentCongId]);
+
   const handleClose = () => setShowModal(false);
 
   const handleSubmitLyDo = async () => {
@@ -191,18 +213,22 @@ const SalaryStaffByTT = (ma_nv) => {
     }
 
     const statusLuong = {
-      id_trong: currentSalaryId.id_trong, // Sử dụng currentSalaryId để xác định ID
-      id_ngoai: currentSalaryId.id_ngoai,
-      id_dot: currentSalaryId.id_dot, // Cần đảm bảo rằng bạn có id_dot cho nhân viên này
+      id_he_so_thuong:
+        loaiPhieu.loai_phieu === "1" ? currentCongId.id_he_so_thuong : null, // Sử dụng currentCongId để xác định ID
+      id_gio_cong_gian_ca:
+        loaiPhieu.loai_phieu === "2" ? currentCongId.id_gio_cong_gian_ca : null,
+      id_cong_main:
+        loaiPhieu.loai_phieu === "3" ? currentCongId.id_cong_main : null,
+      id_dot: currentCongId.id_dot, // Cần đảm bảo rằng bạn có id_dot cho nhân viên này
       tinh_trang: "Cập nhật lý do", // Sử dụng lý do để xác định trạng thái
       ly_do: reason.ly_do,
       nguoi_nhap: ma_nv.ma_nv,
       create_time: new Date(),
     };
-
+    console.log("statusLuong", statusLuong);
     try {
       // Gửi yêu cầu POST đến API
-      await axios.post(`${API_BASE_URL}/statusLuong`, [statusLuong]);
+      await axios.post(`${API_BASE_URL}/statusCong`, [statusLuong]);
 
       toast.success("Gửi lý do thành công");
 
@@ -311,7 +337,7 @@ const SalaryStaffByTT = (ma_nv) => {
             <div className="col-xl col-lg-4">
               <div className="mb-3 position-relative w-100">
                 <label htmlFor="new-month-salary" className="form-label">
-                  Bảng lương tháng
+                  Bảng công tháng
                 </label>
                 <DatePicker
                   dateFormat="MM/yyyy"
@@ -330,7 +356,7 @@ const SalaryStaffByTT = (ma_nv) => {
             <div className="col-xl col-lg-4">
               <div className="mb-3 position-relative">
                 <label htmlFor="update-period-name" className="form-label">
-                  Tên đợt lương
+                  Tên đợt công
                 </label>
                 <select
                   className="form-select"
@@ -341,16 +367,16 @@ const SalaryStaffByTT = (ma_nv) => {
                   }
                   required
                 >
-                  <option value="">Chọn đợt lương</option>
-                  {dotLuong && dotLuong.length > 0 ? (
-                    dotLuong.map((dot) => (
+                  <option value="">Chọn đợt công</option>
+                  {dotCong && dotCong.length > 0 ? (
+                    dotCong.map((dot) => (
                       <option key={dot.id} value={dot.id}>
                         {dot.ten_dot}
                       </option>
                     ))
                   ) : (
                     <option value="" disabled>
-                      Không có đợt lương
+                      Không có đợt công
                     </option>
                   )}
                 </select>
@@ -434,9 +460,9 @@ const SalaryStaffByTT = (ma_nv) => {
           </div>
         </form>
 
-        {salarys.length > 0 ? (
+        {congs.length > 0 ? (
           <div className="mt-4">
-            <h5>Kết quả tìm kiếm {salarys.length} bản ghi</h5>
+            <h5>Kết quả tìm kiếm {congs.length} bản ghi</h5>
             <table className="table table-striped">
               <thead>
                 <tr>
@@ -453,55 +479,53 @@ const SalaryStaffByTT = (ma_nv) => {
                 </tr>
               </thead>
               <tbody>
-                {salarys.map((salary, index) => (
+                {congs.map((cong, index) => (
                   <tr key={index}>
                     <td>{index + 1}</td>
-                    <td>{salary.ma_nv}</td>
-                    <td>{salary.ten_nv}</td>
-                    <td>{salary.ten_bo_phan}</td>
+                    <td>{cong.ma_nv}</td>
+                    <td>{cong.ten_nv}</td>
+                    <td>{cong.ten_bo_phan}</td>
                     {search.periodName && (
                       <>
                         <td>
-                          {salary.l_id
-                            ? salary.tinh_trang || "Chưa có trạng thái"
-                            : "Không có lương"}
+                          {cong.l_id
+                            ? cong.tinh_trang || "Chưa có trạng thái"
+                            : "Không có công"}
                         </td>
                         <td className="text-center">
-                          {salary.tinh_trang ? (
+                          {cong.tinh_trang ? (
                             <>
-                              {salary.tinh_trang ===
+                              {cong.tinh_trang ===
                               "Đã gửi lý do chưa xác nhận" ? (
-                                <span>
-                                  {salary.l_ly_do || "Không có lý do"}
-                                </span>
-                              ) : salary.tinh_trang !== search.status ? (
-                                <span>Khác ({salary.tinh_trang})</span>
-                              ) : salary.tinh_trang === "Chưa xác nhận" ? (
+                                <span>{cong.l_ly_do || "Không có lý do"}</span>
+                              ) : cong.tinh_trang !== search.status ? (
+                                <span>Khác ({cong.tinh_trang})</span>
+                              ) : cong.tinh_trang === "Chưa xác nhận" ? (
                                 <button
                                   className="btn btn-primary mx-2"
                                   onClick={() =>
-                                    handleShow(salary.id_dot, salary.l_id)
+                                    handleShow(cong.id_dot_dong, cong.l_id)
                                   }
                                 >
                                   Nhập lý do
                                 </button>
                               ) : (
-                                <span>{salary.tinh_trang}</span>
+                                <span>{cong.tinh_trang}</span>
                               )}
                             </>
-                          ) : salary.l_id ? (
+                          ) : cong.l_id ? (
                             <>
                               <button
                                 className="btn btn-primary mx-2"
                                 onClick={() =>
-                                  handleShow(salary.id_dot, salary.l_id)
+                                  handleShow(cong.id_dot_cong, cong.l_id)
                                 }
                               >
                                 Nhập lý do
                               </button>
                             </>
                           ) : (
-                            <span>Không có lương</span>
+                            <span>Không có công</span>
                           )}
                         </td>
                       </>
@@ -558,4 +582,4 @@ const SalaryStaffByTT = (ma_nv) => {
   );
 };
 
-export default SalaryStaffByTT;
+export default WorHoursStaffByTT;

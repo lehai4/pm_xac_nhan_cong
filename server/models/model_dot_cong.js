@@ -324,6 +324,7 @@ const DotCong = {
     const formattedDate = `${formattedMonth}-${year}`;
     return formattedDate;
   },
+
   createTableBangCongChinh: async (bang_cong_t, dotCongId) => {
     const connection = await db.getConnection();
     try {
@@ -332,13 +333,40 @@ const DotCong = {
       const format = DotCong.formatMonth(bang_cong_t);
       console.log("format", format);
       const data = await DotCong.getPmSynchronousCong(format);
-      console.log("data", data);
+      // console.log("data", data);
       for (let item of data) {
         await db.query(
-          `INSERT INTO pm_cong_main (so_the, ho, ten, hanh_chinh_ca1_ca2, ca3, ngay_thuong, ngay_nghi_hang_tuan, ngay_le, gc_thai_thu_7,
-          gc_nuoi_con_nho, gc_nguoi_cao_tuoi, gc_cong_tac, phep, om, con_om, viec_rieng_co_luong, viec_rieng_khong_luong, khong_ly_do, kham_thai,
-          thai_san, duong_suc, trong_gio, ngoai_gio, gc_ngung_viec, gc_nghi_le, id_dot_cong) 
-          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          `INSERT INTO pm_cong_main (
+            so_the, ho, ten, hanh_chinh_ca1_ca2, ca3, ngay_thuong, ngay_nghi_hang_tuan, ngay_le, gc_thai_thu_7,
+            gc_nuoi_con_nho, gc_nguoi_cao_tuoi, gc_cong_tac, phep, om, con_om, viec_rieng_co_luong, viec_rieng_khong_luong, 
+            khong_ly_do, kham_thai, thai_san, duong_suc, trong_gio, ngoai_gio, gc_ngung_viec, gc_nghi_le, id_dot_cong
+          ) 
+          VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+          ON DUPLICATE KEY UPDATE
+            ho = VALUES(ho),
+            ten = VALUES(ten),
+            hanh_chinh_ca1_ca2 = VALUES(hanh_chinh_ca1_ca2),
+            ca3 = VALUES(ca3),
+            ngay_thuong = VALUES(ngay_thuong),
+            ngay_nghi_hang_tuan = VALUES(ngay_nghi_hang_tuan),
+            ngay_le = VALUES(ngay_le),
+            gc_thai_thu_7 = VALUES(gc_thai_thu_7),
+            gc_nuoi_con_nho = VALUES(gc_nuoi_con_nho),
+            gc_nguoi_cao_tuoi = VALUES(gc_nguoi_cao_tuoi),
+            gc_cong_tac = VALUES(gc_cong_tac),
+            phep = VALUES(phep),
+            om = VALUES(om),
+            con_om = VALUES(con_om),
+            viec_rieng_co_luong = VALUES(viec_rieng_co_luong),
+            viec_rieng_khong_luong = VALUES(viec_rieng_khong_luong),
+            khong_ly_do = VALUES(khong_ly_do),
+            kham_thai = VALUES(kham_thai),
+            thai_san = VALUES(thai_san),
+            duong_suc = VALUES(duong_suc),
+            trong_gio = VALUES(trong_gio),
+            ngoai_gio = VALUES(ngoai_gio),
+            gc_ngung_viec = VALUES(gc_ngung_viec),
+            gc_nghi_le = VALUES(gc_nghi_le);`,
           [
             item.SOTHE,
             item.HO,
@@ -380,8 +408,9 @@ const DotCong = {
 
   createDotCong: async (DotCongArray) => {
     if (!Array.isArray(DotCongArray)) {
-      throw new Error("DotCongArray phải là một mảng");
+      // throw new Error("DotCongArray phải là một mảng");
     }
+    console.log("DotCongArray", DotCongArray);
     const connection = await db.getConnection(); // Sử dụng getConnection nếu bạn dùng pool
     try {
       await connection.beginTransaction(); // Bắt đầu transaction
@@ -401,8 +430,19 @@ const DotCong = {
 
         const [result] = await connection.query(
           `INSERT INTO pm_cong_dot (
-              ten_dot, bang_cong_t, time_start, time_end, time_xem, loai_phieu, time_start_ql, time_end_ql, is_Active
-            ) VALUES (?, ?, ?, ?,?, ?, ?, ?, 1)`,
+          ten_dot, bang_cong_t, time_start, time_end, time_xem, loai_phieu, time_start_ql, time_end_ql, is_Active
+          )
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)
+          on duplicate key update
+          bang_cong_t = values(bang_cong_t),
+          time_start = values(time_start),
+          time_end = values(time_end),
+          time_xem = values(time_xem),
+          loai_phieu = values(loai_phieu),
+          time_start_ql = values(time_start_ql),
+          time_end_ql = values(time_end_ql),
+          is_Active = values(is_Active);
+          `,
           [
             ten_dot,
             bang_cong_t,

@@ -783,22 +783,26 @@ exports.getCongDetails = async (req, res) => {
       phuTrach,
       maNV,
       idDot,
-      idTrong,
+      HST,
       tinhTrang,
       page = 1,
       limit = 10,
       loaiPhieu,
       bophan,
     } = req.query;
+    console.log("req.query", req.query);
     const offset = (page - 1) * limit;
 
     let luongTable, idColumn;
     if (loaiPhieu === "1") {
-      luongTable = "pm_luong_chi_trong";
-      idColumn = "id_trong";
+      luongTable = "pm_he_so_thuong";
+      idColumn = "id_he_so_thuong";
     } else if (loaiPhieu === "2") {
-      luongTable = "pm_luong_chi_ngoai";
-      idColumn = "id_ngoai";
+      luongTable = "pm_gio_cong_gian_ca";
+      idColumn = "id_gio_cong_gian_ca";
+    } else if (loaiPhieu === "3") {
+      luongTable = "pm_cong_main";
+      idColumn = "id_cong_main";
     } else {
       return res
         .status(400)
@@ -821,13 +825,13 @@ exports.getCongDetails = async (req, res) => {
     }
 
     if (idDot) {
-      conditions.push("l.id_dot = ?");
+      conditions.push("l.id_dot_cong = ?");
       params.push(idDot);
     }
 
-    if (idTrong) {
+    if (HST) {
       conditions.push("l.id = ?");
-      params.push(idTrong);
+      params.push(HST);
     }
 
     if (tinhTrang === "Chưa xác nhận") {
@@ -854,9 +858,9 @@ exports.getCongDetails = async (req, res) => {
     LEFT JOIN sync_data_hi_time_sheet.sync_bo_phan bp ON bpqln.id_bo_phan = bp.id
     LEFT JOIN pm_phong_ban_quan_ly_new pb ON pb.id = bp.id_phong_ban
     LEFT JOIN sync_data_hi_time_sheet.sync_phong_ban pbnew ON pbnew.id = pb.id_phong_ban
-    LEFT JOIN ${luongTable} l ON l.ma_nv = nv.ma_nv
-    LEFT JOIN pm_luong_dot d ON d.id = l.id_dot
-    LEFT JOIN pm_luong_status_luong sl ON sl.${idColumn} = l.id AND sl.id_dot = l.id_dot
+    LEFT JOIN ${luongTable} l ON l.so_the = nv.ma_nv
+    LEFT JOIN pm_cong_dot d ON d.id = l.id_dot_cong
+    LEFT JOIN pm_cong_status_cong sl ON sl.${idColumn} = l.id AND sl.id_dot = l.id_dot_cong
     ${whereClause}
     `;
 
@@ -868,15 +872,15 @@ exports.getCongDetails = async (req, res) => {
       bp.ten_bo_phan,
       pbnew.ten_phong_ban,
       l.id as l_id,
-      l.id_dot,
-      d.bang_luong_t,
+      l.id_dot_cong,
+      d.bang_cong_t,
       sl.tinh_trang,
       sl.ly_do,
       CASE 
-        WHEN l.id IS NULL THEN 'Chưa có phiếu lương'
+        WHEN l.id IS NULL THEN 'Chưa có phiếu công'
         WHEN sl.id IS NULL THEN 'Chưa có trạng thái'
         ELSE 'Có phiếu lương'
-      END as status_phieu_luong
+      END as status_phieu_cong
     ${baseQuery}
     ORDER BY bp.ten_bo_phan ASC, nv.ma_nv ASC
     LIMIT ?

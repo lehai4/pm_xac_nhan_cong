@@ -97,8 +97,11 @@ const PhanQuyen = {
         const formattedTimeEnd = moment(time_end).format("YYYY-MM-DD HH:mm:ss");
         return db.query(
           `
-                INSERT INTO pm_cong_dot_phong_ban_time_allow_view (id_dot, id_phong_ban, time_start, time_end)
-                VALUES (?, ?, ?, ?);
+               INSERT INTO pm_cong_dot_phong_ban_time_allow_view (id_dot, id_phong_ban, time_start, time_end)
+                VALUES (?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                  time_start = VALUES(time_start),
+                  time_end = VALUES(time_end);
             `,
           [id_dot, id_phong_ban, formattedTimeStart, formattedTimeEnd]
         );

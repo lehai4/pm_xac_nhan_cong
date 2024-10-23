@@ -74,7 +74,7 @@ const WorkHoursStaff = (ma_nv) => {
   // Lấy dữ liệu công
   const fetchDotCongs = useCallback(async () => {
     if (!isQL && !isTT) return;
-    console.log(dotCong.length === 0, !id_bo_phan);
+    // console.log(dotCong.length === 0, !id_bo_phan);
     if (dotCong.length === 0 || !id_bo_phan) return;
     try {
       const congPromises = dotCong.map(async (dot) => {
@@ -116,12 +116,14 @@ const WorkHoursStaff = (ma_nv) => {
 
         // Fetch loại phiếu
         let loaiPhieuData = null;
-        console.log(search.periodName);
+        console.log("Loại phiếu", search.periodName);
         if (search.periodName) {
           const loaiPhieuResponse = await axios.get(
             `${API_BASE_URL}/dotcong/${search.periodName}`
           );
           loaiPhieuData = loaiPhieuResponse.data;
+          // console.log("vô đây không!!!");
+          // console.log("loaiPhieuData", loaiPhieuData);
           setLoaiPhieu(loaiPhieuData);
           setDateInput(loaiPhieuResponse.data.bang_cong_t);
         }
@@ -172,7 +174,7 @@ const WorkHoursStaff = (ma_nv) => {
                 cong_main = mainResponse.data || [];
               } catch (error) {
                 if (error.response && error.response.status !== 404) {
-                  console.error("Lỗi khi lấy dữ liệu Chi Ngoai:", error);
+                  console.error("Lỗi khi lấy dữ liệu Công Main:", error);
                 }
               }
             } else {
@@ -200,7 +202,8 @@ const WorkHoursStaff = (ma_nv) => {
       } finally {
         setIsLoading(false);
       }
-    }
+    },
+    [isQL, ma_nv.ma_nv, itemsPerPage, search, API_BASE_URL, setLoaiPhieu]
   );
 
   const handlePageChange = (page) => {
@@ -324,6 +327,7 @@ const WorkHoursStaff = (ma_nv) => {
       bophan: "",
       periodName: "",
     });
+    setLoaiPhieu([]);
     setDataLoaded(false); // Reset the dataLoaded state to trigger a reload
   };
 
@@ -416,25 +420,23 @@ const WorkHoursStaff = (ma_nv) => {
 
   const rollback = () => {
     setError(null);
-    setEmployees(employeesDefault);
   };
 
   useEffect(() => {
-    // Fetch loại phiếu
     const getLoaiPhieu = async () => {
       // Fetch
       let loaiPhieuData = null;
-      if (search.periodName) {
-        const loaiPhieuResponse = await axios.get(
-          `${API_BASE_URL}/dotcong/${search.periodName}`
-        );
-        loaiPhieuData = loaiPhieuResponse.data;
-        setLoaiPhieu(loaiPhieuData);
-        setDateInput(loaiPhieuResponse.data.bang_cong_t);
-      }
+      const loaiPhieuResponse = await axios.get(
+        `${API_BASE_URL}/dotcong/${search.periodName}`
+      );
+      loaiPhieuData = loaiPhieuResponse.data;
+      setLoaiPhieu(loaiPhieuData);
+      setDateInput(loaiPhieuResponse.data.bang_cong_t);
     };
     if (search.periodName) {
-      getLoaiPhieu();
+      console.log("runing...");
+      fetchNhanVienFilter(1, true);
+      // getLoaiPhieu();
     }
   }, [search.periodName]);
 
