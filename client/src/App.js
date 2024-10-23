@@ -119,7 +119,7 @@ function App() {
                 />
                 <Route
                   path="work-hours-details-staff"
-                  element={<WorkHoursStaff />}
+                  element={<WorkHoursStaff ma_nv={ma_nv} />}
                 />
                 <Route path="*" element={<Navigate to="/" />} />
               </>

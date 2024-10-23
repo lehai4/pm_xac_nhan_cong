@@ -325,6 +325,7 @@ exports.getCongsQLByIDNV = async (req, res) => {
   try {
     const { bang_cong_t, phutrach } = req.params;
 
+    console.log("Phụ tr");
     if (!bang_cong_t || !phutrach) {
       return res.status(400).json({ message: "Thiếu thông tin cần thiết" });
     }
@@ -354,21 +355,21 @@ exports.getCongsQLByIDNV = async (req, res) => {
       "pm_cong_main",
       bang_cong_t,
       "3",
-      id_bo_phan,
+      phutrach,
     ]);
 
     const [resultsGCGC] = await db.query(queryBase, [
       "pm_gio_cong_gian_ca",
       bang_cong_t,
       "2",
-      id_bo_phan,
+      phutrach,
     ]);
 
     const [resultsHST] = await db.query(queryBase, [
       "pm_he_so_thuong",
       bang_cong_t,
       "1",
-      id_bo_phan,
+      phutrach,
     ]);
 
     res.json({ resultsMain, resultsGCGC, resultsHST });

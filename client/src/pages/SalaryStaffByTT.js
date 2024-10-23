@@ -43,11 +43,10 @@ const SalaryStaffByTT = (ma_nv) => {
         const response = await axios.get(
           `${API_BASE_URL}/bophan/bophan-by-phutrach/${ma_nv.ma_nv}`
         );
-  
+
         setPhongBanArray(response.data);
       } catch (error) {
         setPhongBanArray([]);
-      
       }
     };
     fetchPhongBan();

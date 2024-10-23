@@ -1,27 +1,32 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useAuth } from "../../hooks/useAuth";
+import { Spin } from "antd";
 import axios from "axios";
-import { API_BASE_URL } from "../../config/api";
+import moment from "moment";
+import React, { useCallback, useEffect, useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import moment from "moment";
-import SalaryDetailModal from "../../components/Model/SalaryDetailModal";
-import { Spin } from "antd";
+import { toast } from "react-toastify";
 import WorkingHoursModal from "../../components/Model/WorkingHoursModal";
-// import "antd/dist/antd.css"; // hoặc 'antd/dist/antd.less' nếu bạn sử dụng Less
+import { API_BASE_URL } from "../../config/api";
+import { useAuth } from "../../hooks/useAuth";
+import { formatNumber, getDaysInMonth, getDaysInMonthArr } from "../../utils";
 
 const WorkHoursStaff = (ma_nv) => {
   const { isQL, isTT } = useAuth();
+  const [dateInput, setDateInput] = useState("");
   const [dotCong, setDotCong] = useState([]);
-  const [salaries, setCongs] = useState({});
+  const [currentView, setCurrentView] = useState("cong_main");
+  const [employees, setEmployees] = useState([]);
+  const [employeesDefault, setEmployeesDefault] = useState([]);
+  const [congs, setCongs] = useState({});
+  const [error, setError] = useState(null);
   const [search, setSearch] = useState({
-    // month: new Date(new Date().setMonth(new Date().getMonth() - 1)),
     month: new Date(new Date().setMonth(new Date().getMonth())),
     employeeId: "",
     bophan: "",
     periodName: "",
   });
   const id_bo_phan = localStorage.getItem("id_bo_phan");
+  const [filteredCongs, setFilteredCongs] = useState([]);
   const [selectedEmployee, setSelectedEmployee] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
   const [BoPhanArray, setBoPhanArray] = useState([]);
@@ -29,10 +34,10 @@ const WorkHoursStaff = (ma_nv) => {
   const [ten_phong_ban, setTenPhongBan] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalItems, setTotalItems] = useState(0);
   const itemsPerPage = 50; // Số lượng item trên mỗi trang, có thể điều chỉnh
   const [loaiPhieu, setLoaiPhieu] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [days, setDays] = useState([]);
 
   useEffect(() => {
     // Lấy dữ liệu bộ phận
@@ -72,7 +77,7 @@ const WorkHoursStaff = (ma_nv) => {
     console.log(dotCong.length === 0, !id_bo_phan);
     if (dotCong.length === 0 || !id_bo_phan) return;
     try {
-      const salaryPromises = dotCong.map(async (dot) => {
+      const congPromises = dotCong.map(async (dot) => {
         const endpoint = isQL ? "search-by-ql-id" : "search-by-tt-id";
         const phutrach = isQL ? ma_nv.ma_nv : id_bo_phan;
         const response = await axios.get(
@@ -81,16 +86,16 @@ const WorkHoursStaff = (ma_nv) => {
         return response.data;
       });
 
-      const salaryResults = await Promise.all(salaryPromises);
-      const combinedSalaries = Object.assign({}, ...salaryResults);
-      setCongs(combinedSalaries);
+      const congResults = await Promise.all(congPromises);
+      const combinedCongs = Object.assign({}, ...congResults);
+      setCongs(combinedCongs);
     } catch (error) {
-      console.error("Error fetching salaries:", error);
+      console.error("Error fetching công:", error);
       setCongs({});
     }
   }, [isQL, isTT, dotCong, id_bo_phan]);
 
-  const fetchNhanVien = useCallback(
+  const fetchNhanVienFilter = useCallback(
     async (page = 1, applyFilters = false) => {
       const endpoint = isQL ? "search-by-ql" : "search-by-tt";
       try {
@@ -118,8 +123,8 @@ const WorkHoursStaff = (ma_nv) => {
           );
           loaiPhieuData = loaiPhieuResponse.data;
           setLoaiPhieu(loaiPhieuData);
+          setDateInput(loaiPhieuResponse.data.bang_cong_t);
         }
-        console.log("ma_nv", ma_nv);
         const response = await axios.get(
           `${API_BASE_URL}/congs/${endpoint}/${ma_nv.ma_nv}`,
           { params }
@@ -131,7 +136,7 @@ const WorkHoursStaff = (ma_nv) => {
           results.map(async (cong) => {
             let HST = [];
             let GCGC = [];
-            let mainWork = [];
+            let cong_main = [];
             let congStatus = null;
             // Đảm bảo loaiPhieuData tồn tại và có thuộc tính loai_phieu
             const loaiPhieu =
@@ -139,40 +144,32 @@ const WorkHoursStaff = (ma_nv) => {
                 ? parseInt(loaiPhieuData.loai_phieu, 10)
                 : null;
 
-            console.log("loaiPhieu after parsing:", loaiPhieu);
-
             if (loaiPhieu === 1) {
-              console.log("Fetching HST");
               try {
                 const HSTResponse = await axios.get(
                   `${API_BASE_URL}/dotcong/active-he-so-thuong-ql/${cong.ma_nv}`
                 );
                 HST = HSTResponse.data || [];
-                console.log("HST", HST);
               } catch (error) {
                 console.error("Lỗi khi lấy dữ liệu HST:", error);
               }
             } else if (loaiPhieu === 2) {
-              console.log("Fetching GCGC");
               try {
                 const GCGCResponse = await axios.get(
                   `${API_BASE_URL}/dotcong/active-gio-cong-gian-ca-ql/${cong.ma_nv}`
                 );
                 GCGC = GCGCResponse.data || [];
-                console.log("GCGC", GCGC);
               } catch (error) {
                 if (error.response && error.response.status !== 404) {
                   console.error("Lỗi khi lấy dữ liệu GCGC:", error);
                 }
               }
             } else if (loaiPhieu === 3) {
-              console.log("Fetching Main");
               try {
                 const mainResponse = await axios.get(
                   `${API_BASE_URL}/dotcong/active-gio-cong-main-ql/${cong.ma_nv}`
                 );
-                mainWork = mainResponse.data || [];
-                console.log("mainWork", mainWork);
+                cong_main = mainResponse.data || [];
               } catch (error) {
                 if (error.response && error.response.status !== 404) {
                   console.error("Lỗi khi lấy dữ liệu Chi Ngoai:", error);
@@ -186,7 +183,7 @@ const WorkHoursStaff = (ma_nv) => {
               ...cong,
               HST,
               GCGC,
-              mainWork,
+              cong_main,
               congStatus,
               loaiPhieu,
             };
@@ -196,22 +193,19 @@ const WorkHoursStaff = (ma_nv) => {
         setFilteredCongs(detailedResults);
         setCurrentPage(pagination.page);
         setTotalPages(pagination.totalPages);
-        setTotalItems(pagination.total);
       } catch (error) {
         console.error("Error fetching employee data:", error);
         setFilteredCongs([]);
         setTotalPages(0);
-        setTotalItems(0);
       } finally {
         setIsLoading(false);
       }
-    },
-    [isQL, ma_nv.ma_nv, itemsPerPage, search, API_BASE_URL, setLoaiPhieu]
+    }
   );
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
-    fetchNhanVien(page);
+    fetchNhanVienFilter(page);
   };
 
   const renderPagination = () => {
@@ -308,7 +302,7 @@ const WorkHoursStaff = (ma_nv) => {
       if (dataLoaded) return; // Skip if data is already loaded
 
       try {
-        await fetchNhanVien();
+        await fetchNhanVienFilter();
         await fetchDotCong();
         if (dotCong.length > 0) {
           await fetchDotCongs();
@@ -320,16 +314,20 @@ const WorkHoursStaff = (ma_nv) => {
     };
 
     loadData();
-  }, [fetchNhanVien, fetchDotCong, fetchDotCongs, dotCong, dataLoaded]);
+  }, [fetchNhanVienFilter, fetchDotCong, fetchDotCongs, dotCong, dataLoaded]);
 
   // Load ReadTime
   const reloadData = () => {
+    setSearch({
+      month: new Date(new Date().setMonth(new Date().getMonth())),
+      employeeId: "",
+      bophan: "",
+      periodName: "",
+    });
     setDataLoaded(false); // Reset the dataLoaded state to trigger a reload
   };
 
   // Xem chi tiết
-  const [currentView, setCurrentView] = useState("cong_main");
-  const [filteredCongs, setFilteredCongs] = useState([]);
   const [showMainWorkModal, setShowMainWorkModal] = useState(false);
   const [noDataMessage, setNoDataMessage] = useState("");
   const [showNoDataModal, setShowNoDataModal] = useState(false);
@@ -406,35 +404,63 @@ const WorkHoursStaff = (ma_nv) => {
   const handleSearchChange = useCallback(
     async (key, value) => {
       setSearch((prev) => ({ ...prev, [key]: value }));
-
-      if (key === "periodName") {
-        setIsLoading(true);
-        try {
-          await fetchNhanVien(1, true);
-        } catch (error) {
-          console.error("Error fetching data after period change:", error);
-        } finally {
-          setIsLoading(false);
-        }
-      }
     },
-    [fetchNhanVien]
+    [fetchNhanVienFilter]
   );
 
-  useEffect(() => {
-    if (search.periodName) {
-      fetchNhanVien(1, true);
-    }
-  }, [search.periodName, fetchNhanVien]);
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     fetchDotCong();
-    // fetchNhanVien(1, true); // Reset về trang 1 và áp dụng bộ lọc mới
-
-    // về nhà viết lại hàm này để khi tìm kiểm là sẽ chỉ hiển thị 1 nhân viên thay vì nhiều nhân viên
+    fetchNhanVienFilter(1, true); // Reset về trang 1 và áp dụng bộ lọc mới
   };
 
+  const rollback = () => {
+    setError(null);
+    setEmployees(employeesDefault);
+  };
+
+  useEffect(() => {
+    // Fetch loại phiếu
+    const getLoaiPhieu = async () => {
+      // Fetch
+      let loaiPhieuData = null;
+      if (search.periodName) {
+        const loaiPhieuResponse = await axios.get(
+          `${API_BASE_URL}/dotcong/${search.periodName}`
+        );
+        loaiPhieuData = loaiPhieuResponse.data;
+        setLoaiPhieu(loaiPhieuData);
+        setDateInput(loaiPhieuResponse.data.bang_cong_t);
+      }
+    };
+    if (search.periodName) {
+      getLoaiPhieu();
+    }
+  }, [search.periodName]);
+
+  useEffect(() => {
+    fetchDotCong();
+  }, [search.month]);
+
+  useEffect(() => {
+    const dayToday = getDaysInMonthArr(dateInput);
+    setDays(dayToday);
+  }, [dateInput]);
+
+  if (isLoading) {
+    return <div className="text-center mt-5">Đang tải dữ liệu...</div>;
+  }
+
+  if (error) {
+    return (
+      <>
+        <div className="text-center mt-5 text-danger">{error}</div>
+        <div className="text-center mt-4">
+          <button onClick={rollback}>Quay lại</button>
+        </div>
+      </>
+    );
+  }
   return (
     <div className="">
       <button onClick={reloadData}>Reload Data</button>
@@ -446,7 +472,7 @@ const WorkHoursStaff = (ma_nv) => {
                 Bảng công tháng
               </label>
               <DatePicker
-                disabled
+                // disabled
                 dateFormat="MM/yyyy"
                 showMonthYearPicker
                 selected={search.month}
@@ -504,7 +530,7 @@ const WorkHoursStaff = (ma_nv) => {
                     a.ten_bo_phan.localeCompare(b.ten_bo_phan)
                   ).map((bophan) => (
                     <option key={bophan.id} value={bophan.id}>
-                      {bophan.ten_bo_phan}
+                      {bophan.ten_phong_ban}
                     </option>
                   ))}
                 </select>
@@ -540,7 +566,7 @@ const WorkHoursStaff = (ma_nv) => {
       </form>
 
       {!dataLoaded && <Spin size="large" />}
-      {dataLoaded && (
+      {dataLoaded && filteredCongs.length > 0 && dotCong.length > 0 ? (
         <div>
           <h2>
             Danh sách nhân viên {isQL ? ten_phong_ban : BoPhanArray.ten_bo_phan}
@@ -552,32 +578,565 @@ const WorkHoursStaff = (ma_nv) => {
                   <th>Mã NV</th>
                   <th>Họ tên</th>
                   <th>Xem chi tiết</th>
+                  {loaiPhieu.loai_phieu === "1" && (
+                    <>
+                      {days.map((day) => (
+                        <th
+                          className="white-space border text-center px-4 py-2"
+                          key={day}
+                        >
+                          Ngày {day}
+                        </th>
+                      ))}
+                      <th className="white-space border text-center px-4 py-2">
+                        Vpcl
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Vpkl
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        O
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Hsbq
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Hsbq Thg
+                      </th>
+                    </>
+                  )}
+                  {loaiPhieu.loai_phieu === "2" && (
+                    <>
+                      <th className="white-space border text-center px-4 py-2">
+                        Hành chính + Ca1 + Ca2
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ca3
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngày thường
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngày nghỉ hàng tuần
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngày lễ
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Phép
+                      </th>
+                    </>
+                  )}
+                  {loaiPhieu.loai_phieu === "3" && (
+                    <>
+                      <th className="white-space border text-center px-4 py-2">
+                        Hành chính + Ca1 + Ca2
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ca3
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngày thường
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngày nghỉ hàng tuần
+                      </th>
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngày lễ
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Giờ công thai thứ 7
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Giờ công nuôi con nhỏ
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Giờ công người cao tuổi
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Giờ công công tác
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Phép(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Ốm(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Con ốm(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Việc riêng có lương(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Việc riêng không lương(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Không lý do(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Việc riêng không lương(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Khám thai(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Thai sản(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Dưỡng sức(giờ)
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Trong giờ
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Ngoài giờ
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Giờ công ngừng việc
+                      </th>
+
+                      <th className="white-space border text-center px-4 py-2">
+                        Giờ công nghỉ lễ
+                      </th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
                 {filteredCongs &&
-                  filteredCongs.map((cong, index) => (
-                    <tr key={cong?.id || index}>
-                      <td data-label="Mã NV">{cong?.ma_nv || ""}</td>
-                      <td className="text-start" data-label="Họ tên">
-                        {cong?.ten_nv || ""}
+                  filteredCongs.map((employee, index) => (
+                    <tr key={employee?.id || index}>
+                      <td data-label="Mã NV">{employee?.ma_nv || ""}</td>
+                      <td
+                        className="text-start white-space"
+                        data-label="Họ tên"
+                      >
+                        {employee?.ten_nv || ""}
                       </td>
                       <td data-label="Xem chi tiết">
                         <button
-                          className="btn btn-primary btn-sm"
-                          onClick={() => handleViewDetails(cong.ma_nv)}
+                          className="btn btn-primary btn-sm white-space"
+                          onClick={() => handleViewDetails(employee.ma_nv)}
                         >
                           Xem chi tiết
                         </button>
                       </td>
+                      {loaiPhieu.loai_phieu === "1" && (
+                        <>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot1
+                              ? formatNumber(employee?.HST[0]?.cot1)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot2
+                              ? formatNumber(employee?.HST[0]?.cot2)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot3
+                              ? formatNumber(employee?.HST[0]?.cot3)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot4
+                              ? formatNumber(employee?.HST[0]?.cot4)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot5
+                              ? formatNumber(employee?.HST[0]?.cot5)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot6
+                              ? formatNumber(employee?.HST[0]?.cot6)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot7
+                              ? formatNumber(employee?.HST[0]?.cot7)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot8
+                              ? formatNumber(employee?.HST[0]?.cot8)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot9
+                              ? formatNumber(employee?.HST[0]?.cot9)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot10
+                              ? formatNumber(employee?.HST[0]?.cot10)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot11
+                              ? formatNumber(employee?.HST[0]?.cot11)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot12
+                              ? formatNumber(employee?.HST[0]?.cot12)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot13
+                              ? formatNumber(employee?.HST[0]?.cot13)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot14
+                              ? formatNumber(employee?.HST[0]?.cot14)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot15
+                              ? formatNumber(employee?.HST[0]?.cot15)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot16
+                              ? formatNumber(employee?.HST[0]?.cot16)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot17
+                              ? formatNumber(employee?.HST[0]?.cot17)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot18
+                              ? formatNumber(employee?.HST[0]?.cot18)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot19
+                              ? formatNumber(employee?.HST[0]?.cot19)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot20
+                              ? formatNumber(employee?.HST[0]?.cot20)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot21
+                              ? formatNumber(employee?.HST[0]?.cot21)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot22
+                              ? formatNumber(employee?.HST[0]?.cot22)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot23
+                              ? formatNumber(employee?.HST[0]?.cot23)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot24
+                              ? formatNumber(employee?.HST[0]?.cot24)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot25
+                              ? formatNumber(employee?.HST[0]?.cot25)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot26
+                              ? formatNumber(employee?.HST[0]?.cot26)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot27
+                              ? formatNumber(employee?.HST[0]?.cot27)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot28
+                              ? formatNumber(employee?.HST[0]?.cot28)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot29
+                              ? formatNumber(employee?.HST[0]?.cot29)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot30
+                              ? formatNumber(employee?.HST[0]?.cot30)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.cot31
+                              ? formatNumber(employee?.HST[0]?.cot31)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.vpcl
+                              ? formatNumber(employee?.HST[0]?.vpcl)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.vpkl
+                              ? formatNumber(employee?.HST[0]?.vpkl)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.o
+                              ? formatNumber(employee?.HST[0]?.o)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.hsbq
+                              ? formatNumber(employee?.HST[0]?.hsbq)
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.HST[0]?.hsbqthg
+                              ? formatNumber(employee?.HST[0]?.hsbqthg)
+                              : 0}
+                          </td>
+                        </>
+                      )}
+                      {loaiPhieu.loai_phieu === "2" && (
+                        <>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.GCGC[0]?.hanh_Chinh_Ca
+                              ? formatNumber(employee?.GCGC[0]?.hanh_Chinh_Ca)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.GCGC[0]?.ca3
+                              ? formatNumber(employee?.GCGC[0]?.ca3)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.GCGC[0]?.ngay_Thuong
+                              ? formatNumber(employee?.GCGC[0]?.ngay_Thuong)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.GCGC[0]?.ngay_Nghi_Hang_Tuan
+                              ? formatNumber(
+                                  employee?.GCGC[0]?.ngay_Nghi_Hang_Tuan
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.GCGC[0]?.ngay_Le
+                              ? formatNumber(employee?.GCGC[0]?.ngay_Le)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.GCGC[0]?.phep
+                              ? formatNumber(employee?.GCGC[0]?.phep)
+                              : 0}
+                          </td>
+                        </>
+                      )}
+                      {loaiPhieu.loai_phieu === "3" && (
+                        <>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.hanh_chinh_ca1_ca2
+                                )
+                              : 0}
+                          </td>
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.ca3)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.ngay_thuong
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.ngay_nghi_hang_tuan
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.ngay_le)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.gc_thai_thu_7
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.gc_nuoi_con_nho
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.gc_nguoi_cao_tuoi
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.gc_cong_tac
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.phep)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.om)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.con_om)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.viec_rieng_co_luong
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.viec_rieng_khong_luong
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.khong_ly_do
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.viec_rieng_khong_luong
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.kham_thai)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.thai_san)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.duong_suc)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.trong_gio)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.ngoai_gio)
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(
+                                  employee?.cong_main[0]?.gc_ngung_viec
+                                )
+                              : 0}
+                          </td>
+
+                          <td className="white-space border text-center px-4 py-2">
+                            {employee?.cong_main[0]
+                              ? formatNumber(employee?.cong_main[0]?.gc_nghi_le)
+                              : 0}
+                          </td>
+                        </>
+                      )}
                     </tr>
                   ))}
               </tbody>
             </table>
           </div>
-
           {renderPagination()}
         </div>
+      ) : (
+        <p>Không có dữ liệu công nhân viên.</p>
       )}
       {showNoDataModal && (
         <div
